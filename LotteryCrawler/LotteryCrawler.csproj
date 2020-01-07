@@ -48,14 +48,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Crawlers\Lotofacil.cs" />
     <Compile Include="Crawlers\Lottery.cs" />
-    <Compile Include="Crawlers\Mega.cs" />
-    <Compile Include="Crawlers\Lotomania.cs" />
+    <Compile Include="Crawlers\PredictiveTestMethod.cs" />
+    <Compile Include="Crawlers\StudyNumbers.cs" />
+    <Compile Include="Net\IResultsGenerator.cs" />
+    <Compile Include="Net\Mocked10Results.cs" />
+    <Compile Include="Net\Mocked60Results.cs" />
+    <Compile Include="Net\MockedResults.cs" />
+    <Compile Include="Net\NumbersProvider.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Crawlers\Quina.cs" />
-    <Compile Include="Net\ResultsGetter.cs" />
+    <Compile Include="Net\MegaSenaResults.cs" />
     <Compile Include="Model\Sorteio.cs" />
     <Compile Include="Util\Data.cs" />
   </ItemGroup>

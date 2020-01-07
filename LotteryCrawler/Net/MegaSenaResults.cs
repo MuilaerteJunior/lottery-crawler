@@ -1,39 +1,37 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LotteryCrawler.Net
 {
-    public class ResultsGetter
+    public class MegaSenaResults : IResultsGenerator
     {
-        private string url;
-        private string dataFileName;
-        private int drawnCount;
+        private string _url;
+        private string _dataFileName;
+        private int _drawnCount;
 
-        public ResultsGetter(string url, string dataFileName, int drawnCount)
+        public MegaSenaResults()
         {
-            this.url = url;
-            this.dataFileName = dataFileName;
-            this.drawnCount = drawnCount;
+            this._url = "http://www1.caixa.gov.br/loterias/_arquivos/loterias/D_megase.zip";
+            this._dataFileName = "D_MEGA.HTM";
+            this._drawnCount = 6;
         }
 
-        public List<Sorteio> GetResults()
-        {            
+        public IEnumerable<Sorteio> Resultados(int size)
+        {
+            _drawnCount = size;
             return ParseFileData(ExtractFileToMemory(DownloadMostRecentFile()));
         }
 
         private string DownloadMostRecentFile()
         {
             var tempFileName = Path.GetTempFileName();         
-
-            HttpWebRequest webReq = (HttpWebRequest)HttpWebRequest.Create(url);
-
+            HttpWebRequest webReq = (HttpWebRequest)HttpWebRequest.Create(_url);
             webReq.CookieContainer = new CookieContainer();
             webReq.Method = "GET";
             using (WebResponse response = webReq.GetResponse())
@@ -59,7 +57,7 @@ namespace LotteryCrawler.Net
         {
             using (ZipArchive archive = new ZipArchive(File.OpenRead(filePath)))
             {
-                ZipArchiveEntry entry = archive.Entries.Where(x => x.Name.ToUpper() == dataFileName).FirstOrDefault();
+                ZipArchiveEntry entry = archive.Entries.FirstOrDefault(x => x.Name.ToUpper() == _dataFileName);
                 if (entry != null)
                     using (var stream = entry.Open())
                     {
@@ -72,26 +70,26 @@ namespace LotteryCrawler.Net
         private List<Sorteio> ParseFileData(string fileContent)
         {
             var htmlDoc = new HtmlAgilityPack.HtmlDocument();
-
-            // There are various options, set as needed
             htmlDoc.OptionFixNestedTags = true;
-
-            // filePath is a path to a file containing the html
             htmlDoc.LoadHtml(fileContent);
+            List<Sorteio> sorteios = ReadAndExtractInformation(htmlDoc);
+            return sorteios;
+        }
 
+        private List<Sorteio> ReadAndExtractInformation(HtmlDocument htmlDoc)
+        {
             var sorteios = new List<Sorteio>();
-
-            foreach (var line in htmlDoc.DocumentNode.SelectNodes("//tr").Where(x=>x.ChildNodes.Count > drawnCount + 2).Skip(1))
+            foreach (var line in htmlDoc.DocumentNode.SelectNodes("//tr").Where(x => x.ChildNodes.Count > _drawnCount + 2).Skip(1))
             {
                 var sorteio = new Sorteio();
 
                 sorteio.Id = int.Parse(line.ChildNodes.Where(x => x.Name == "td").ElementAt(0).InnerText);
-                sorteio.Date = DateTime.Parse(line.ChildNodes.Where(x=>x.Name == "td").ElementAt(1).InnerText , CultureInfo.GetCultureInfo("pt-BR"));
+                sorteio.Date = DateTime.Parse(line.ChildNodes.Where(x => x.Name == "td").ElementAt(1).InnerText, CultureInfo.GetCultureInfo("pt-BR"));
 
-                for (var i = 2; i < 2 + drawnCount; i++)
+                for (var i = 2; i < 2 + _drawnCount; i++)
                 {
                     var cell = line.ChildNodes.Where(x => x.Name == "td").ElementAt(i);
-                    sorteio.Numbers.Add(int.Parse(cell.InnerText));                    
+                    sorteio.Numbers.Add(int.Parse(cell.InnerText));
                 }
 
                 sorteios.Add(sorteio);
