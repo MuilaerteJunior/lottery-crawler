@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace LotteryCrawler.Crawlers
+namespace LotteryCrawler.Bet.Crawlers
 {
     public class StudyNumbers {
         private List<Sorteio> _results;
