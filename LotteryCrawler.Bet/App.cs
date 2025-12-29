@@ -85,6 +85,17 @@ namespace LotteryCrawler.Bet
 
                             GiveMeABet(results, lottery, pickupAttempt, _config.HowManyNumbers);
                             break;
+                        case "b":
+                            int howManyBets = 1;
+                            if (args.Length >= 2)
+                                Int32.TryParse(args[1], out howManyBets);
+
+                            Console.WriteLine($"Option: Generating bets in batch mode {howManyBets}");
+                            for (int i = 0; i < howManyBets; i++)
+                            {
+                                GiveMeABet(results, lottery, pickupAttempt, _config.HowManyNumbers);
+                            }
+                            break;
                         case "h":
                             Console.WriteLine("Help");
                             Console.WriteLine("t - see after how many tries it will discover a winning game.");
@@ -95,6 +106,9 @@ namespace LotteryCrawler.Bet
                             Console.WriteLine("Parameters:");
                             Console.WriteLine($"Number of games to study: default => {numberGamesStudy}");
                             Console.WriteLine($"Attempt to pickup: default => {pickupAttempt}");
+                            Console.WriteLine("b - Generates games in batch mode,");
+                            Console.WriteLine("Parameters:");
+                            Console.WriteLine($"Number of games to generate: default => 1");
                             break;
                         case "q":
                             break;
@@ -104,7 +118,7 @@ namespace LotteryCrawler.Bet
                     }
                 }
             }
-
+            Console.ReadKey();
         }
 
 
@@ -188,14 +202,12 @@ namespace LotteryCrawler.Bet
                     magicalBet.Enqueue(new MagicalBet(finalBid, tryIndex));
                     tryIndex++;
                 } while (tryIndex < maxTry);
-                Console.WriteLine($"Good Luck! {magicalBet.Last()}. Press to exit");
+                Console.WriteLine($"Good Luck! {magicalBet.Last()}.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex);
             }
-            
-            Console.ReadKey();
         }
 
         #region Show methods
