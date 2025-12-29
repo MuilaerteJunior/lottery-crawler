@@ -13,7 +13,7 @@ namespace LotteryCrawler.Bet.Model
 
         public MagicalBet(int[] finalBid, int tryIndex)
         {
-            this.Bet = finalBid;
+            this.Bet = finalBid.OrderBy(a=> a).ToArray();
             this.TryIdentifier = tryIndex;
         }
 
