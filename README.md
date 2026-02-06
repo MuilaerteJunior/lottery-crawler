@@ -1,28 +1,46 @@
 # LotteryCrawler
 
-This project try to guess results from lottery. Also, it can generates random number for you try your luck
+Developer plan (pseudocode)
 
+## What is this repository?
 
-## How to use it?
+This project tries to guess results from lottery draws and can also generate random bets for you to try your luck.
 
-Once the solution is built, you can execute following statements
+There are two application projects:
+- `LotteryCrawler.App` — primary CLI application for generating bets and attempting to guess results (equivalent to previous `Bet` behavior).
+- `LotteryCrawler.Study` — supporting application focused on studying historical results and producing analysis used by the guessing logic.
 
-- Trying to guess a game mode
-- Generate a bet mode
+## Build (requires .NET 10)
 
+- From solution root:
+  - `dotnet build`
+- Or build a specific project:
+  - `dotnet build src/LotteryCrawler.App`
+  - `dotnet build src/LotteryCrawler.Study`
 
-## Trying to guess a game mode
+## How to run
 
-	LotteryCrawler.Bet.exe t //It will use the default parameters
-	LotteryCrawler.Bet.exe t 1000 //It will use 1000 games to study and classify data to generate a bet
-	LotteryCrawler.Bet.exe t 1000 "01,16,32,46,56,58"//It will try to generate the exactly game that will match with the "01,16,32,46,56,58" using 1000 results to study
+You can run the apps either by using the built executable (on Windows) or `dotnet run`.
 
-## Generating a bet mode
+Examples using built executables:
+- Generate a bet (default parameters)
+  - `LotteryCrawler.App.exe g`
+- Generate a specific 6 bets
+  - `LotteryCrawler.App.exe g 6`
 
-	LotteryCrawler.Bet.exe g //It will use the default parameters
-	LotteryCrawler.Bet.exe g 1234 //It will return to user the 1234th bet generated
+## How to view help
 
+Both applications use `Displayer.ShowHelp()` to present usage information. To display help and see exact supported commands and options, use any of the common help invocations:
 
-## Critics,suggestions,improvements are welcome
+- `LotteryCrawler.App.exe h`
+- 
+Same applies for `LotteryCrawler.Study`:
+- `LotteryCrawler.Study.exe h`
 
-Contact me: https://www.linkedin.com/in/muilaerte-junior/
+Follow the printed help to discover additional commands and options implemented by each application.
+
+## Notes, feedback and contributions
+
+Critics, suggestions, and improvements are welcome.
+
+Contact: https://www.linkedin.com/in/muilaerte-junior/

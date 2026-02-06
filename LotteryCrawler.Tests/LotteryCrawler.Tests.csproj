@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LotteryCrawler.Bet\LotteryCrawler.Bet.csproj" />
+    <ProjectReference Include="..\LotteryCrawler.Core\LotteryCrawler.Core.csproj" />
   </ItemGroup>
 
 </Project>
