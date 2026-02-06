@@ -1,0 +1,41 @@
+name: Weekly App Execution
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'
+  workflow_dispatch: 
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build and Run App
+        run: |
+          dotnet restore
+          dotnet run --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app.txt
+              
+      - name: Build and Run Study
+        run: |
+          dotnet restore
+          dotnet run --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_study.txt
+
+      - name: Send Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.mailgun.org
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Weekly Console App Results - ${{ github.run_id }}"
+          to: ${{ secrets.RECIPIENT_EMAIL }}
+          from: "Automation Service <${{ secrets.SENDER_EMAIL }}>"
+          body: "The weekly task has completed. Please find the log attached."
+          attachments: result_app.txt,result_study.txt
