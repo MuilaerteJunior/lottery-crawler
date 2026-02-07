@@ -76,8 +76,7 @@ namespace LotteryCrawler.App
                 } else
                     Console.WriteLine($"Choose a valid option between {string.Join("/", _menuOptions)}");
             }
-            Console.WriteLine("Press any key to exit");
-            Console.ReadKey();
+            Console.WriteLine("Finished.");
         }
 
         private static void GenerateBatch(int[][] results, UserInput userArgs, List<IReadEngine> oldEngines, IGenerateEngine generateEngine, short manyNumbers)

@@ -77,8 +77,7 @@ namespace LotteryCrawler.Study
                 } else
                     Console.WriteLine($"Choose a valid option between {string.Join(" / ", menuOptions)}");
             }
-            Console.WriteLine("Press any key to exit");
-            Console.ReadKey();
+            Console.WriteLine("Finished");
         }
         
         private void StudyResults(int[][] results, UserInput userArgs, Dictionary<string, Tuple<List<IReadEngine>, IGenerateEngine, int?>> generateEngine, short manyNumbers)
