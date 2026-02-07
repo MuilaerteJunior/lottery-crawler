@@ -20,12 +20,12 @@ jobs:
       - name: Build and Run App
         run: |
           dotnet restore
-          dotnet run --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app.txt
+          dotnet run m2 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_m2.txt
               
       - name: Build and Run Study
         run: |
           dotnet restore
-          dotnet run --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_study.txt
+          dotnet run s --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_study.txt
 
       - name: Send Email
         uses: dawidd6/action-send-mail@v3
