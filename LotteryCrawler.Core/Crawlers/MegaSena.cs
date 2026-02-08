@@ -4,29 +4,8 @@ using System.Net.Http;
 
 namespace LotteryCrawler.Core.Crawlers
 {
-
-    public class ApostaDTO { 
-
-        /// <summary>
-        /// Números já ordenados
-        /// </summary>
-        public string[] listaDezenas { get; set; }
-        /// <summary>
-        /// Data do sorteio
-        /// </summary>
-        public string dataApuracao { get; set; }
-        /// <summary>
-        /// Número do concurso
-        /// </summary>
-        public int numero { get; set; }
-    }
-
-
     public class MegaSena : LotteryService<ApostaDTO>
     {
-        private string _url;
-        private string _dataFileName;
-        //private int _drawnCount;
 
         //https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena/2526
         //https://servicebus2.caixa.gov.br/portaldeloterias/_arquivos/loterias/D_megase.zip
@@ -46,6 +25,9 @@ namespace LotteryCrawler.Core.Crawlers
         public override int ObterNumeroResultadoMaisRecente()
         {
             var jogoMaisRecente = ObterJogo(null);
+            if (jogoMaisRecente == null)
+                throw new Exception("Não foi possível obter o número do resultado mais recente.");
+
             return jogoMaisRecente.numero;
         }
 
@@ -57,16 +39,19 @@ namespace LotteryCrawler.Core.Crawlers
                 try
                 {
                     var jogo = ObterJogo(idJogo);
-                    filaSorteios.Enqueue(new Sorteio()
+                    if (jogo != null && jogo.listaDezenas != null && jogo.dataApuracao != null)
                     {
-                        Numbers = jogo.listaDezenas.Select(a => Convert.ToInt32(a)).ToList(),
-                        Date = DateTime.ParseExact(jogo.dataApuracao, "dd/MM/yyyy", System.Globalization.CultureInfo.CurrentCulture),
-                        Id = jogo.numero,
-                    });
+                        filaSorteios.Enqueue(new Sorteio()
+                        {
+                            Numbers = [.. jogo.listaDezenas.Select(a => Convert.ToInt32(a))],
+                            Date = DateTime.ParseExact(jogo.dataApuracao, "dd/MM/yyyy", System.Globalization.CultureInfo.CurrentCulture),
+                            Id = jogo.numero,
+                        });
+                    }
                 }
                 catch
                 {
-                    var aa = "";
+                    
                 }
             });
             return filaSorteios;

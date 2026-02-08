@@ -97,8 +97,12 @@ namespace LotteryCrawler.Study
                     var expectedResult = subsetResults.TakeLast(1).FirstOrDefault();
                     subsetResults = subsetResults.Take(subsetResults.Count() - 1);
 
-                    var generatedBet = GenerateABet(subsetResults, expectedResult, item.Value.Item1, item.Value.Item2, manyNumbers);
-                    outputValues.Add(generatedBet);
+                    // Fix: Only call GenerateABet if expectedResult is not null
+                    if (expectedResult != null)
+                    {
+                        var generatedBet = GenerateABet(subsetResults, expectedResult, item.Value.Item1, item.Value.Item2, manyNumbers);
+                        outputValues.Add(generatedBet);
+                    }
 
                     if (userArgs.verbosity && index > 0 && index % 1000 == 0)
                         Console.WriteLine($"{item.Value.Item2.Identification} - Fixed? {item.Value.Item3.HasValue} - {index} already processed...");

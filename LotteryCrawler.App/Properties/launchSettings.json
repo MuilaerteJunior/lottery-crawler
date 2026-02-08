@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LotteryCrawler.App": {
+      "commandName": "Project",
+      "commandLineArgs": "m1 6"
+    }
+  }
+}

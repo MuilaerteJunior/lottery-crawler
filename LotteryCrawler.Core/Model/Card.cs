@@ -5,6 +5,10 @@
         public Card(BetNumber[] numbers)
         {
             DoThis(numbers);
+            this.ResultGame = [];
+            this.FinalGame = [];
+            this.History = [];
+            this.EngineName = "unknown";
         }
 
         public Card(BetNumber[] availableNumbers, BetNumber[] resultGame, BetNumber[] finalGame, int[][] history, string engineName)
@@ -14,7 +18,7 @@
             this.ResultGame = resultGame;
             this.FinalGame = finalGame;
             this.History = history;
-            EngineName = engineName;
+            this.EngineName = engineName;
         }
         
         public Dictionary<int, decimal> PresenceElements { get; private set; } = new Dictionary<int, decimal>();

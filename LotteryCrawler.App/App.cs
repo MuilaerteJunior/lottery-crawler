@@ -102,7 +102,7 @@ namespace LotteryCrawler.App
         {
             Console.WriteLine("Option: Generating a bet in new mode");
             var newModeBet = GenerateABet(results, readEngines, generatorEngine, manyNumbers);
-            Console.WriteLine("Generated bet: " + newModeBet.ToString());
+            Console.WriteLine($"Generated bet: {newModeBet.ToString()} - Engine: {generatorEngine.Identification}");
         }
 
         static MagicalBet GenerateABet(int[][] results, List<IReadEngine> readEngines, IGenerateEngine generateEngine, short manyNumbers)

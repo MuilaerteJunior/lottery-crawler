@@ -158,6 +158,7 @@ namespace LotteryCrawler.Core.Display
 
                 OutputFormatter.PrintSectionTitle("Summary of Engines Precision (Match count > 3)");
                 var valuableResults = cardsInfo.Where(a => a.MatchedNumbers.Count() > 3).OrderByDescending(x => x.MatchedNumbers.Count());
+                var rowFormatSummary = "{0,-15} | {1,-8} | {2,-25} | {3,-8}  | {4,-25} | {5,-8} | {6,-25}";
                 foreach (var item in valuableResults)
                 {
                     string col1Value = item.EngineName;
@@ -168,7 +169,7 @@ namespace LotteryCrawler.Core.Display
                     string col6Value = DisplayPrecisionSum(item.FinalGame, item.History.Length);
                     string col7Value = string.Join(",", item.MatchedNumbers);
 
-                    var content = string.Format(rowFormat, col1Value, col2Value, col3Value, col4Value, col5Value, col6Value, col7Value);
+                    var content = string.Format(rowFormatSummary, col1Value, col2Value, col3Value, col4Value, col5Value, col6Value, col7Value);
                     Console.WriteLine(content);
                 }
                 OutputFormatter.PrintLineSeparator();

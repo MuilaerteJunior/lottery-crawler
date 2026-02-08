@@ -33,6 +33,8 @@ namespace LotteryCrawler.Core
 
         private static int[][] GetAllLoteryResults()
         {
+            if ( _lotteryService == null)
+                throw new NullReferenceException("_lotteryService");
             if (!jogoMaisRecente.HasValue)
                 jogoMaisRecente = _lotteryService.ObterNumeroResultadoMaisRecente();
 

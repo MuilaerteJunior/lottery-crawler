@@ -7,16 +7,12 @@ namespace LotteryCrawler.Core.Crawlers
 {
     public class StudyNumbers {
         private List<Sorteio> _results;
-        private List<int> RepeatedNumberLastTwoResults;
-
-        private List<string> LastDivisionNumber;
         private int _numberOfConsiderations;
         private int _betNumberLimit = 6;
         private static readonly Random _random = new Random();
-        private Sorteio _lastResult;
-        private static readonly char[] numbersCategories = { 'A' , 'B', 'C', 'D', 'E', 'F' };
-        private IEnumerable<char> _repeatedLetterLastGame;
-        private IEnumerable<char> _intersectionLast2Games;
+        private Sorteio? _lastResult;
+        private IEnumerable<char>? _repeatedLetterLastGame;
+        private IEnumerable<char>? _intersectionLast2Games;
 
         public StudyNumbers(List<Sorteio> results, int numberOfConsiderations)
         {

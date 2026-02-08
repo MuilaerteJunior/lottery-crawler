@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LotteryCrawler.Study": {
+      "commandName": "Project",
+      "commandLineArgs": "y"
+    }
+  }
+}

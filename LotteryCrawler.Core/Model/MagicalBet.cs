@@ -6,7 +6,7 @@ namespace LotteryCrawler.Core.Model
     {
         public MagicalBet(int[] finalBid, int tryIndex)
         {
-            this.Bet = finalBid.OrderBy(a=> a).ToArray();
+            this.FinalNumbers = finalBid.Select(x => x > 0 ? new BetNumber(x) : null).Where(a => a != null).ToArray()!;
             this.TryIdentifier = tryIndex;
         }
 
@@ -14,11 +14,9 @@ namespace LotteryCrawler.Core.Model
         {
             this.FinalNumbers = finalBid.OrderBy(a => a.Number).ToArray();
         }
-        public int[] Bet { get { return FinalNumbers.Select(x => x.Number).ToArray(); } set => bet = value; }
+        public int[] Bet { get { return FinalNumbers.Select(x => x.Number).ToArray(); } }
 
         public BetNumber[] FinalNumbers { get; set; }
-        public BetNumber[] Options;
-        private int[] bet;
 
         public int TryIdentifier { get; set; }        
 
