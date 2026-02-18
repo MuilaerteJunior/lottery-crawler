@@ -25,22 +25,22 @@ namespace LotteryCrawler.App
             _lottery = _lott;
         }
 
-        private record UserInput(string optionMenu, int howManyBets);
+        private record UserInput(string optionMenu, int gamePosition, short howManyNumbers);
         private static UserInput ProcessArgs(string[] args, CoreConfig core)
         {
             var optionMenu = args[0] as string;
             if (optionMenu == null)
-                return new UserInput("?", -1);
+                return new UserInput("?", -1, -1);
 
-            int howManyBets = 0;
-            string gameToFind = string.Empty;
-            if (args.Length >= 2)
+            if (args.Length >= 2 && Int16.TryParse(args[1], out short howManyNumbers))
             {
-                if (!Int32.TryParse(args[1], out howManyBets))
-                    gameToFind = args[1];
+                if (args.Length >= 3 && Int32.TryParse(args[2], out int gamePosition))
+                    return new UserInput(optionMenu.ToLower(), gamePosition, howManyNumbers);
+
+                return new UserInput(optionMenu.ToLower(), -1, howManyNumbers);
             }
 
-            return new UserInput(optionMenu.ToLower(), howManyBets);
+            return new UserInput(optionMenu.ToLower(), -1 , 6);
         }
 
         public void Run(string[] args)
@@ -51,8 +51,7 @@ namespace LotteryCrawler.App
                 Console.WriteLine("Starting...");
                 var msEngine = new MegaSenaEngine(_lottery);
                 int[][] results = msEngine.GetPreviousResults();
-                var core = new CoreConfig();
-                short numberCount = 6;
+                var core = new CoreConfig();                
                 var userArgs = ProcessArgs(args, core);
                 if (userArgs != null)
                 {                    
@@ -64,10 +63,10 @@ namespace LotteryCrawler.App
                         default:
                             if ( core.AvailableEngines.TryGetValue(userArgs.optionMenu, out var item))
                             {
-                                if ( userArgs.howManyBets > 0)
-                                    GenerateBatch(results, userArgs, item.Item1, item.Item2, numberCount);
+                                if ( userArgs.gamePosition > 0)
+                                    GenerateBatch(results, userArgs, item.Item1, item.Item2, userArgs.howManyNumbers);
                                 else
-                                    GenerateBetMenu(results, item.Item1, item.Item2, numberCount);
+                                    GenerateBetMenu(results, item.Item1, item.Item2, userArgs.howManyNumbers);
                             }
                             else
                                 Console.WriteLine($"Choose a valid option between {string.Join("/",_menuOptions)}");
@@ -81,11 +80,11 @@ namespace LotteryCrawler.App
 
         private static void GenerateBatch(int[][] results, UserInput userArgs, List<IReadEngine> oldEngines, IGenerateEngine generateEngine, short manyNumbers)
         {
-            if (userArgs.howManyBets > 0)
+            if (userArgs.gamePosition > 0)
             {
-                Console.WriteLine($"Option: Generating bets in batch mode {userArgs.howManyBets}");
+                Console.WriteLine($"Option: Generating bets in batch mode {userArgs.gamePosition}");
                 var generatedGames = new Queue<MagicalBet>();
-                for (int i = 0; i < userArgs.howManyBets; i++)
+                for (int i = 0; i < userArgs.gamePosition; i++)
                 {
                     generatedGames.Enqueue(GenerateABet(results, oldEngines, generateEngine, manyNumbers));
                 }

@@ -86,11 +86,17 @@ namespace LotteryCrawler.Core.Display
             Console.WriteLine("  h    Show this help text");
             Console.WriteLine();
             Console.WriteLine("Parameters:");
-            Console.WriteLine("  value:");
-            Console.WriteLine("    - Position of a result to search. Nth game");
+            Console.WriteLine("  -v:");
+            Console.WriteLine("    - It will show detailed information");
+            Console.WriteLine("  number:");
+            Console.WriteLine("    - how many numbers to consider as a bet simulation");
+            Console.WriteLine("  gameIndex:");
+            Console.WriteLine("    - It will consider the N-game as the aimed result to predict");
             Console.WriteLine();            
             Console.WriteLine("Examples:");
-            Console.WriteLine("  LotteryCrawler.Bet.exe n 5           -> It will try study the bets trying to match the 5th game");
+            Console.WriteLine("  LotteryCrawler.Bet.exe s 8           -> It will generate all bets consider 8 numbers");
+            Console.WriteLine("  LotteryCrawler.Bet.exe s -v          -> It will generate all bets consider 6 numbers in detailed mode");
+            Console.WriteLine("  LotteryCrawler.Bet.exe s 6 1500      -> It will generate all bets considering 6 numbers that will try to generate the result from 1500th game");
             Console.WriteLine();
         }
         public static void ShowAppHelp()
@@ -109,11 +115,13 @@ namespace LotteryCrawler.Core.Display
             Console.WriteLine("  h    Show this help text");
             Console.WriteLine();
             Console.WriteLine("Parameters:");
-            Console.WriteLine("  numberOfBets: (optional)");
+            Console.WriteLine("  How Many numbers: (optional - integer)");
+            Console.WriteLine("    - It will generate a game considered N numbers ");
+            Console.WriteLine("  Batch mode: (optional - integer)");
             Console.WriteLine("    - how many bets to generate");
             Console.WriteLine();
             Console.WriteLine("Examples:");
-            Console.WriteLine("  LotteryCrawler.App.exe n 10          -> Generate 10 bets using n engine");
+            Console.WriteLine("  LotteryCrawler.App.exe n 6 10          -> Generate 10 bets using n engine");
             Console.WriteLine();
             Console.WriteLine("Notes:");
             Console.WriteLine("  - If no numberOfBets provided, it will be generated just a single bet");

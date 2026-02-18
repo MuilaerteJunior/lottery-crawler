@@ -25,32 +25,37 @@ namespace LotteryCrawler.Study
             _lottery = _lott;
         }
 
-        private record UserInput(string optionMenu, short gameIndex, bool verbosity = false);
+        private record UserInput(string optionMenu, short gameIndex = -1, bool verbosity = false, short howManyNumbers = 6);
         private static UserInput ProcessArgs(string[] args)
         {
             var optionMenu = args[0] as string;
             if (optionMenu == null || !menuOptions.Contains(optionMenu.ToLower()))
                 return new UserInput("?", -1);
 
-            short gameIndex = -1;
-            if (args.Length >= 2)
+            if (args.Length > 1)
             {
-                if (!Int16.TryParse(args[1], out short gameNumber))
-                    return new UserInput("?", -1);
+                var verbosity = args[1].ToLower();
+                if (verbosity.Equals("-v") || verbosity.Equals("verbosity") || verbosity.Equals("v"))
+                {
+                    if (args.Length > 2 && Int16.TryParse(args[2], out short gameIndex))
+                        return new UserInput(optionMenu.ToLower(), gameIndex, true);
+
+                    return new UserInput(optionMenu.ToLower(), -1, true);
+                }
+                else if (Int16.TryParse(args[1], out short howManyNumbers) && howManyNumbers > 0)
+                {
+                    if (args.Length > 2 && Int16.TryParse(args[2], out short gameIndex))
+                        return new UserInput(optionMenu.ToLower(), gameIndex, false, howManyNumbers);
+
+                    return new UserInput(optionMenu.ToLower(), -1, false, howManyNumbers);
+                }
             }
 
-            if (args.Length >= 3)
-            {
-                var  verbosity = args[2] = args[2].ToLower();
-                if ( verbosity.Equals("-v") || verbosity.Equals("verbosity") || verbosity.Equals("v") )
-                    return new UserInput(optionMenu.ToLower(), gameIndex, true);
-            }
-
-            return new UserInput(optionMenu.ToLower(), gameIndex);
+            return new UserInput(optionMenu.ToLower());
         }
         public void Run(string[] args)
         {
-            Console.WriteLine("Lottery...");            
+            Console.WriteLine("Lottery!");            
             if (args != null && args.Length > 0)
             {
                 Console.WriteLine("Starting...");
@@ -66,9 +71,9 @@ namespace LotteryCrawler.Study
                         case MENU_OPTION_QUIT: break;
                         case MENU_OPTION_STUDY:
                             if (userArgs.gameIndex > 0 && userArgs.gameIndex < results.Length)
-                                StudyResults(results.Take(userArgs.gameIndex).ToArray(), userArgs, coreConfig.AvailableEngines, 6);
+                                StudyResults(results.Take(userArgs.gameIndex).ToArray(), userArgs, coreConfig.AvailableEngines, userArgs.howManyNumbers);
                             else
-                                StudyResults(results, userArgs, coreConfig.AvailableEngines, 6); 
+                                StudyResults(results, userArgs, coreConfig.AvailableEngines, userArgs.howManyNumbers); 
                             break;
                         default:
                             Console.WriteLine($"Choose a valid option between {string.Join("/", menuOptions)}");
