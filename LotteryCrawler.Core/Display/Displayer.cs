@@ -69,6 +69,32 @@ namespace LotteryCrawler.Core.Display
             var precisionSum = ((betNumbers?.Sum(x => x.PositiveProbability ?? 0m) ?? 0m) / totalBetsConsidered).ToString("0.###");
             return precisionSum;
         }
+
+        public static void ShowStudyAppResults(int[][] results)
+        {
+            Console.WriteLine("LotteryCrawler.Bet - Showing results");
+            Console.WriteLine();
+            if (results.Any())
+            {
+                var rowFormat = "{0,-4} | {1,-70} ";
+                string header1 = $"#";
+                string header2 = "Result";
+                var headerContent = string.Format(rowFormat, header1, header2);
+
+                Console.WriteLine(headerContent);
+                OutputFormatter.PrintLineSeparator(headerContent.Length);
+                for (int resultIndex = 0; resultIndex < results.Length; resultIndex++)
+                {
+                    int[] item = results[resultIndex]; 
+                    string result = string.Join(" - ", item);
+                    var content = string.Format(rowFormat, resultIndex + 1, result);
+
+                    Console.WriteLine(content);
+                }
+                Console.WriteLine();
+            }
+        }
+
         public static void ShowStudyAppHelp()
         {
             Console.WriteLine("LotteryCrawler.Bet - Help / Usage");
@@ -163,6 +189,12 @@ namespace LotteryCrawler.Core.Display
                         Console.WriteLine(content);
                     }
                 }
+                OutputFormatter.PrintSectionTitle("Analysis");
+                var info = cardsInfo.Select(c => c.ResultGame.Sum(x => x.Number));
+                Console.WriteLine($"Average sum of expected games: {info.Average():0.##}");
+                Console.WriteLine($"Min Sum: {info.Min():0.##}");
+                Console.WriteLine($"Max sum: {info.Max():0.##}");
+
 
                 OutputFormatter.PrintSectionTitle("Summary of Engines Precision (Match count > 3)");
                 var valuableResults = cardsInfo.Where(a => a.MatchedNumbers.Count() > 3).OrderByDescending(x => x.MatchedNumbers.Count());
@@ -186,11 +218,17 @@ namespace LotteryCrawler.Core.Display
                                 .OrderByDescending(X => X.Max(X => X.MatchedNumbers.Count()))
                                 .ThenByDescending(x => x.Count())
                                 .Select(x => x);
-                var summaryRowFormat= "{0,-20} | {1,-20} | {2,-20}";
-                Console.WriteLine(string.Format(summaryRowFormat, "Engine", "Max match", "Bets with more than 3 numbers matched"));
+                var summaryRowFormat= "{0,-20} | {1,-20} | {2,-50}| {3,-20}";
+                Console.WriteLine(string.Format(summaryRowFormat, "Engine", "Max match", "Bets with more than 3 numbers matched",  "Precision (%)"));
+                var historyCount = cardsInfo.Max(x => x.History.Length);
                 foreach (var item in finalSummary)
                 {
-                    Console.WriteLine(string.Format(summaryRowFormat,item.Key, item.Max(a => a.MatchedNumbers.Count()),item.Count()));
+                    decimal precision = ((decimal)item.Count() / historyCount);
+                    Console.WriteLine(string.Format(summaryRowFormat,
+                        item.Key, 
+                        item.Max(a => a.MatchedNumbers.Count()),
+                        item.Count(), 
+                        precision.ToString("0.##%")));
                 }                
             }
             else  {

@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LotteryCrawler.Core.Strategies.GenerateEngines
+﻿namespace LotteryCrawler.Core.Strategies.GenerateEngines
 {
+
     internal class Lottery : IGenerateEngine
     {
         public Lottery()
         {
         }
 
-        public string? Identification => "Lottery";
+        public virtual string? Identification => "Lottery";
 
-        public BetNumber[] GenerateBet(int[][] history, Card options, short maxNumOfElements)
+        public virtual BetNumber[] GenerateBet(int[][] history, Card options, short maxNumOfElements)
         {
             var randomGenerator = new Random();
             var finalBid = new int[maxNumOfElements];

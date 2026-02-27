@@ -2,56 +2,74 @@
 using LotteryCrawler.Core;
 using LotteryCrawler.Core.Crawlers;
 using LotteryCrawler.Core.Display;
-using LotteryCrawler.Core.Model;
 using LotteryCrawler.Core.Strategies.GenerateEngines;
 using LotteryCrawler.Core.Strategies.ReadEngines;
-using System;
-using System.Reflection;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("LotteryCrawler.Study.Tests")]
 namespace LotteryCrawler.Study
 {
-
     public class StudyApp
     {
         private const int MAX_TRY = Int32.MaxValue;
         private readonly LotteryService<ApostaDTO> _lottery;
         private const string MENU_OPTION_STUDY = "s";
         private const string MENU_OPTION_HELP = "h";
+        private const string MENU_OPTION_RESULTS= "r";
         private const string MENU_OPTION_QUIT = "q";
-        private static string[] menuOptions = { MENU_OPTION_STUDY, MENU_OPTION_HELP, MENU_OPTION_QUIT };
+        private static string[] menuOptions = { MENU_OPTION_STUDY, MENU_OPTION_HELP, MENU_OPTION_RESULTS, MENU_OPTION_QUIT };
 
         public StudyApp(LotteryService<ApostaDTO> _lott)
         {
             _lottery = _lott;
         }
 
-        private record UserInput(string optionMenu, short gameIndex = -1, bool verbosity = false, short howManyNumbers = 6);
-        private static UserInput ProcessArgs(string[] args)
+        
+
+        internal  class UserInput
         {
-            var optionMenu = args[0] as string;
-            if (optionMenu == null || !menuOptions.Contains(optionMenu.ToLower()))
-                return new UserInput("?", -1);
+            public string optionMenu;
+            public short gameIndex;
+            public bool verbosity;
+            public short howManyNumbers;
 
-            if (args.Length > 1)
+            public UserInput(string optionMenu, short gameIndex = -1, bool verbosity = false, short howManyNumbers = 6)
             {
-                var verbosity = args[1].ToLower();
-                if (verbosity.Equals("-v") || verbosity.Equals("verbosity") || verbosity.Equals("v"))
+                this.optionMenu = optionMenu;
+                this.gameIndex = gameIndex;
+                this.verbosity = verbosity;
+                this.howManyNumbers = howManyNumbers;
+            }
+        }
+        internal static UserInput ProcessArgs(string[] args)
+        {
+            var userInput = new UserInput("?", -1);
+            for (int argIndex = 0; argIndex < args.Length; argIndex++)
+            {
+                string arg = args[argIndex];
+                if (arg.Equals(MENU_OPTION_STUDY))
                 {
-                    if (args.Length > 2 && Int16.TryParse(args[2], out short gameIndex))
-                        return new UserInput(optionMenu.ToLower(), gameIndex, true);
+                    userInput.optionMenu = MENU_OPTION_STUDY;
+                    if (argIndex < args.Length - 1) {
+                        if (Int16.TryParse(args[++argIndex], out short howManyNumbersLocal))
+                        {
+                            userInput.howManyNumbers = howManyNumbersLocal;
+                        }
+                    }
 
-                    return new UserInput(optionMenu.ToLower(), -1, true);
+                } 
+                else if (arg.Equals(MENU_OPTION_HELP) || arg.Equals(MENU_OPTION_RESULTS) || arg.Equals(MENU_OPTION_QUIT))
+                {
+                    userInput = new UserInput(arg);
+                    break;
                 }
-                else if (Int16.TryParse(args[1], out short howManyNumbers) && howManyNumbers > 0)
+                else if (args[argIndex].Equals("-v") || args[argIndex].Equals("verbosity") || args[argIndex].Equals("v"))
                 {
-                    if (args.Length > 2 && Int16.TryParse(args[2], out short gameIndex))
-                        return new UserInput(optionMenu.ToLower(), gameIndex, false, howManyNumbers);
-
-                    return new UserInput(optionMenu.ToLower(), -1, false, howManyNumbers);
+                    userInput.verbosity = true;
                 }
             }
 
-            return new UserInput(optionMenu.ToLower());
+            return userInput;
         }
         public void Run(string[] args)
         {
@@ -68,6 +86,7 @@ namespace LotteryCrawler.Study
                     switch (userArgs.optionMenu)
                     {
                         case MENU_OPTION_HELP: Displayer.ShowStudyAppHelp(); break;
+                        case MENU_OPTION_RESULTS: Displayer.ShowStudyAppResults(results); break;
                         case MENU_OPTION_QUIT: break;
                         case MENU_OPTION_STUDY:
                             if (userArgs.gameIndex > 0 && userArgs.gameIndex < results.Length)
@@ -105,7 +124,7 @@ namespace LotteryCrawler.Study
                     // Fix: Only call GenerateABet if expectedResult is not null
                     if (expectedResult != null)
                     {
-                        var generatedBet = GenerateABet(subsetResults, expectedResult, item.Value.Item1, item.Value.Item2, manyNumbers);
+                        var generatedBet = GenerateABet(subsetResults, expectedResult, item.Value.Item1, item.Value.Item2, manyNumbers, index + 1);
                         outputValues.Add(generatedBet);
                     }
 
@@ -114,10 +133,14 @@ namespace LotteryCrawler.Study
                 }
             }); 
 
-            Displayer.ShowPreciseResults(outputValues.OrderBy(a => a.EngineName), userArgs.verbosity);
+            Displayer.ShowPreciseResults(outputValues.OrderBy(a => a.EngineName).ThenBy(a=> a.GameIndex), userArgs.verbosity);
         }
 
-        static Card GenerateABet(IEnumerable<int[]> results, int[] expectedGame, List<IReadEngine> readEngines, IGenerateEngine generateEngine, short manyNumbers)
+        static Card GenerateABet(IEnumerable<int[]> results, int[] expectedGame, 
+                                List<IReadEngine> readEngines, 
+                                IGenerateEngine generateEngine, 
+                                short manyNumbers,
+                                int gameIndex)
         {
             var allNumbers = Enumerable.Range(1, 60).Select(a => new BetNumber(a)).ToArray();
             var resultsArray = results.ToArray();
@@ -129,7 +152,7 @@ namespace LotteryCrawler.Study
             var finalBid = generateEngine.GenerateBet(resultsArray, no, manyNumbers);
             var precision = no.PresenceElements.Where(x => expectedGame.Contains(x.Key)).Select(x => new BetNumber(x.Key, x.Value, 0)).ToArray();
 
-            var finalCardInfo = new Card(allNumbers, precision, finalBid, resultsArray, generateEngine.Identification ?? "unknown");
+            var finalCardInfo = new Card(allNumbers, precision, finalBid, resultsArray, generateEngine.Identification ?? "unknown", gameIndex);
             return finalCardInfo;
         }
     }

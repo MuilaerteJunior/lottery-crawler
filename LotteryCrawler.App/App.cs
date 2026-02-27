@@ -7,7 +7,9 @@ using LotteryCrawler.Core.Strategies.GenerateEngines;
 using LotteryCrawler.Core.Strategies.ReadEngines;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.Eventing.Reader;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("LotteryCrawler.App.Tests")]
 namespace LotteryCrawler.App
 {
     public class App
@@ -25,8 +27,8 @@ namespace LotteryCrawler.App
             _lottery = _lott;
         }
 
-        private record UserInput(string optionMenu, int gamePosition, short howManyNumbers);
-        private static UserInput ProcessArgs(string[] args, CoreConfig core)
+        internal record UserInput(string optionMenu, int gamePosition, short howManyNumbers);
+        internal static UserInput ProcessArgs(string[] args, CoreConfig core)
         {
             var optionMenu = args[0] as string;
             if (optionMenu == null)

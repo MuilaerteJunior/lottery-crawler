@@ -11,7 +11,7 @@
             this.EngineName = "unknown";
         }
 
-        public Card(BetNumber[] availableNumbers, BetNumber[] resultGame, BetNumber[] finalGame, int[][] history, string engineName)
+        public Card(BetNumber[] availableNumbers, BetNumber[] resultGame, BetNumber[] finalGame, int[][] history, string engineName, int gameIndex)
         {
             DoThis(availableNumbers);
 
@@ -19,6 +19,7 @@
             this.FinalGame = finalGame;
             this.History = history;
             this.EngineName = engineName;
+            this.GameIndex = gameIndex;
         }
         
         public Dictionary<int, decimal> PresenceElements { get; private set; } = new Dictionary<int, decimal>();
@@ -27,6 +28,7 @@
         public IEnumerable<int> MatchedNumbers{ get => FinalGame.Select(x=> x.Number).Intersect(ResultGame.Select(x => x.Number));  }
         public int[][] History { get; }
         public string EngineName { get; }
+        public int GameIndex { get; internal set; }
 
         private void DoThis(BetNumber[] numbers)
         {

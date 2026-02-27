@@ -20,12 +20,12 @@ jobs:
       - name: Build and Run App - Jr
         run: |
           dotnet restore
-          dotnet run m2 6 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_m2_jr.txt
+          dotnet run l 6 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_l_jr.txt
 
       - name: Build and Run App - Mumu
         run: |
           dotnet restore
-          dotnet run m2 6 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_m2_mumu.txt
+          dotnet run l2 6 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_l2_mumu.txt
               
       - name: Build and Run Study
         run: |
@@ -43,7 +43,7 @@ jobs:
           to: ${{ secrets.RECIPIENT_EMAIL }}
           from: "Serviço de automação <${{ secrets.SENDER_EMAIL }}>"
           body: "The weekly task has completed. Please find the log attached."
-          attachments: result_app_m2_jr.txt,result_study.txt
+          attachments: result_app_l_jr.txt,result_study.txt
     
       - name: Send Email - Mumu
         uses: dawidd6/action-send-mail@v3
@@ -56,4 +56,4 @@ jobs:
           to: ${{ secrets.RECIPIENT_EMAIL_2 }}
           from: "Serviço de automação <${{ secrets.SENDER_EMAIL }}>"
           body: "A tarefa foi finalizada. Confira o arquivo em anexo."
-          attachments: result_app_m2_mumu.txt
+          attachments: result_app_l2_mumu.txt

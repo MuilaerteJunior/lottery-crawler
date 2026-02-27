@@ -3,12 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LotteryCrawler.Tests", "LotteryCrawler.Tests\LotteryCrawler.Tests.csproj", "{66EF354D-D348-42BC-8FEF-4998D8A07C6C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D63AFBD5-7EB4-4396-AEA6-B8A6329D9000}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 		.github\workflows\weekly_run.yml = .github\workflows\weekly_run.yml
+		.github\workflows\weekly_run_8_numbers.yml = .github\workflows\weekly_run_8_numbers.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryCrawler.Study", "LotteryCrawler.Study\LotteryCrawler.Study.csproj", "{97514DD0-E6D8-4E41-AFAD-67805EC0EC7B}"
@@ -17,16 +16,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryCrawler.App", "Lotte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryCrawler.Core", "LotteryCrawler.Core\LotteryCrawler.Core.csproj", "{CFDF49DC-1431-402F-ABB1-40D3C4A9BEDC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryCrawler.Study.Tests", "LotteryCrawler.Study.Tests\LotteryCrawler.Study.Tests.csproj", "{7A4033BE-2D5A-43BD-9954-4040C2091AAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryCrawler.App.Tests", "LotteryCrawler.App.Tests\LotteryCrawler.App.Tests.csproj", "{F7742AF2-3EE8-466A-8EB5-4CC36D72CDB4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{66EF354D-D348-42BC-8FEF-4998D8A07C6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{66EF354D-D348-42BC-8FEF-4998D8A07C6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{66EF354D-D348-42BC-8FEF-4998D8A07C6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{66EF354D-D348-42BC-8FEF-4998D8A07C6C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{97514DD0-E6D8-4E41-AFAD-67805EC0EC7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{97514DD0-E6D8-4E41-AFAD-67805EC0EC7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97514DD0-E6D8-4E41-AFAD-67805EC0EC7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +38,14 @@ Global
 		{CFDF49DC-1431-402F-ABB1-40D3C4A9BEDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFDF49DC-1431-402F-ABB1-40D3C4A9BEDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFDF49DC-1431-402F-ABB1-40D3C4A9BEDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A4033BE-2D5A-43BD-9954-4040C2091AAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A4033BE-2D5A-43BD-9954-4040C2091AAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A4033BE-2D5A-43BD-9954-4040C2091AAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A4033BE-2D5A-43BD-9954-4040C2091AAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7742AF2-3EE8-466A-8EB5-4CC36D72CDB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7742AF2-3EE8-466A-8EB5-4CC36D72CDB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7742AF2-3EE8-466A-8EB5-4CC36D72CDB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7742AF2-3EE8-466A-8EB5-4CC36D72CDB4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,17 +20,17 @@ jobs:
       - name: Build and Run App - Jr
         run: |
           dotnet restore
-          dotnet run o 8 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_lottery_8.txt
+          dotnet run l2 15 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_l2_15.txt
 
       - name: Build and Run App - Mumu
         run: |
           dotnet restore
-          dotnet run m2 8 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_m2_8.txt
+          dotnet run l 15 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_l_15.txt
               
       - name: Build and Run Study
         run: |
           dotnet restore
-          dotnet run s 8 --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_study_8.txt
+          dotnet run s 15 --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_study_15.txt
 
       - name: Send Email - Jr
         uses: dawidd6/action-send-mail@v3
@@ -43,4 +43,4 @@ jobs:
           to: ${{ secrets.RECIPIENT_EMAIL }}
           from: "Serviço de automação <${{ secrets.SENDER_EMAIL }}>"
           body: "The weekly task has completed. Please find the log attached."
-          attachments: result_app_lottery_8.txt,result_app_m2_8.txt,result_study_8.txt
+          attachments: result_app_l2_15.txt,result_app_l_15.txt,result_study_15.txt
