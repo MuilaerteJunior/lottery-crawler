@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO.Compression;
 using System.Text;
 using System.Xml.Linq;
 
@@ -74,7 +75,7 @@ namespace LotteryCrawler.Core.Display
         {
             Console.WriteLine("LotteryCrawler.Bet - Showing results");
             Console.WriteLine();
-            if (results.Any())
+            if (results.Length != 0)
             {
                 var rowFormat = "{0,-4} | {1,-70} ";
                 string header1 = $"#";
@@ -156,7 +157,8 @@ namespace LotteryCrawler.Core.Display
         public static void ShowPreciseResults(IEnumerable<Card> cardsInfo, bool verbosityMode = false)
         {
             OutputFormatter.PrintLineSeparator();
-            if (cardsInfo.Any()) {
+            if (cardsInfo.Any())
+            {
                 var rowFormat = "{0,-15} | {1,-30} | {2,-60} | {3,-20}  | {4,-65} | {5,-15} | {6,-50}";
                 if (verbosityMode)
                 {
@@ -168,7 +170,7 @@ namespace LotteryCrawler.Core.Display
                     string header6 = "Precision Sum";
                     string header7 = "Matched numbers";
 
-                    
+
                     var headerContent = string.Format(rowFormat, header1, header2, header3, header4, header5, header6, header7);
 
                     Console.WriteLine(headerContent);
@@ -214,28 +216,101 @@ namespace LotteryCrawler.Core.Display
                 }
                 OutputFormatter.PrintLineSeparator();
 
+
+                OutputFormatter.PrintSectionTitle("Performance summary:");
+
+
                 var finalSummary = valuableResults.GroupBy(x => x.EngineName)
                                 .OrderByDescending(X => X.Max(X => X.MatchedNumbers.Count()))
                                 .ThenByDescending(x => x.Count())
-                                .Select(x => x);
-                var summaryRowFormat= "{0,-20} | {1,-20} | {2,-50}| {3,-20}";
-                Console.WriteLine(string.Format(summaryRowFormat, "Engine", "Max match", "Bets with more than 3 numbers matched",  "Precision (%)"));
+                                .Select(x => new DisplaySummaryInfo2
+                                {
+                                    EngineName = x.Key,
+                                    MaxMatchCount = x.Max(a => a.MatchedNumbers.Count()),
+                                    ManyEffectiveDraws = x.Count()
+                                });
+
+                var summaryRowFormat = "{0,-20} | {1,-20} | {2,-50}| {3,-20}";                
                 var historyCount = cardsInfo.Max(x => x.History.Length);
-                foreach (var item in finalSummary)
-                {
-                    decimal precision = ((decimal)item.Count() / historyCount);
-                    Console.WriteLine(string.Format(summaryRowFormat,
-                        item.Key, 
-                        item.Max(a => a.MatchedNumbers.Count()),
-                        item.Count(), 
-                        precision.ToString("0.##%")));
-                }                
+
+                Print(string.Format(summaryRowFormat, "Engine", "Max match", "Bets with more than 3 numbers matched", "Precision (%)"), finalSummary, summaryRowFormat, historyCount);
+                var finalSummary2 = valuableResults.GroupBy(x => new { Engine = x.EngineName, MatchCount = x.MatchedNumbers.Count() })
+                                .OrderByDescending(g => g.Key.MatchCount)
+                                .ThenByDescending(x => x.Sum(z => z.MatchedNumbers.Count()))
+                                .Select(x => new DisplaySummaryInfo3
+                                {
+                                    EngineName = x.Key.Engine,
+                                    MatchCount = x.Key.MatchCount,
+                                    EffectiveDrawsHaving = x.Count()
+                                });
+
+                OutputFormatter.PrintLineSeparator();
+                Print2(string.Format(summaryRowFormat, "Engine", "Match count", "Number of batchs having this", "Precision (%)"), finalSummary2, summaryRowFormat, historyCount);
+
+                var classifyingAlgorithms = valuableResults.GroupBy(x => x.EngineName)
+                                .Select(k => new DisplaySummaryInfo
+                                {
+                                    Summary = k.Key,
+                                    Weight =
+                                    k.Where(a => a.MatchedNumbers.Count() == 6).Sum(a => a.MatchedNumbers.Count() * 2)
+                                    + k.Where(a => a.MatchedNumbers.Count() == 5).Sum(a => a.MatchedNumbers.Count() * 1.3)
+                                    + k.Where(a => a.MatchedNumbers.Count() == 4).Sum(a => a.MatchedNumbers.Count())
+                                }).OrderByDescending(x => x.Weight).ToList();
+
+                OutputFormatter.PrintLineSeparator();
+                Printout("Top best 5 algorithms 6 * 2 |  5 * 1.3 | 4 * 1", [.. classifyingAlgorithms.Take(5)]);
+
+                OutputFormatter.PrintLineSeparator();
+                Printout("Top 5 worst algorithms:", [.. classifyingAlgorithms.TakeLast(5).OrderBy(x => x.Weight)]);
             }
             else  {
                 
                 Console.Write("Nothing to show");
             }
             OutputFormatter.PrintLineSeparator();
+        }
+
+        private static void Print(string title, IEnumerable<DisplaySummaryInfo2> finalSummary, string summaryRowFormat, int historyCount)
+        {
+            Console.WriteLine(title);
+            foreach (var item in finalSummary)
+            {
+                decimal precision = ((decimal)item.ManyEffectiveDraws / historyCount);
+                Console.WriteLine(string.Format(summaryRowFormat,
+                    item.EngineName,
+                    item.MaxMatchCount,
+                    item.ManyEffectiveDraws,
+                    precision.ToString("0.##%")));
+            }
+        }
+
+        private static void Print2(string title, IEnumerable<DisplaySummaryInfo3> finalSummary, string summaryRowFormat, int historyCount)
+        {
+            Console.WriteLine(title);
+            foreach (var item in finalSummary)
+            {
+                decimal precision = ((decimal)item.EffectiveDrawsHaving / historyCount);
+                Console.WriteLine(string.Format(summaryRowFormat,
+                    item.EngineName,
+                    item.MatchCount,
+                    item.EffectiveDrawsHaving,
+                    precision.ToString("0.##%")));
+            }
+        }
+
+        private static void Printout(string title, List<DisplaySummaryInfo> classifyingAlgorithms)
+        {
+            OutputFormatter.PrintSectionTitle(title);
+            foreach (var item in classifyingAlgorithms)
+            {
+                Console.WriteLine(string.Format("{0,-20} | {1,-20} ", item.Summary, item.Weight));
+            }
+        }
+
+        private class DisplaySummaryInfo
+        {
+            public string Summary { get; set; } = string.Empty;
+            public double Weight{ get; set; }
         }
 
         private static string? ToStringPrecision(BetNumber[] numbers)
@@ -254,5 +329,18 @@ namespace LotteryCrawler.Core.Display
             return $"{string.Join(",", numbers.OrderBy(a => a.Number).Select(a => a.Number))}";
         }
 
+        private class DisplaySummaryInfo2
+        {
+            public string EngineName { get; set; } = string.Empty;
+            public int MaxMatchCount { get; set; }
+            public int ManyEffectiveDraws { get; set; }
+        }
+
+        private class DisplaySummaryInfo3
+        {
+            public string EngineName { get; set; } = string.Empty;
+            public int MatchCount { get; set; }
+            public int EffectiveDrawsHaving { get; set; }
+        }
     }
 }
