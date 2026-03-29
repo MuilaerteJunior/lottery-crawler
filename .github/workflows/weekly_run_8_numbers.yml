@@ -51,7 +51,7 @@ jobs:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "Apostas da mega sena - ${{ github.run_id }}"
-          to: ${{ secrets.RECIPIENT_EMAIL_2 }}
+          to: ${{ secrets.RECIPIENT_EMAIL_1 }},${{ secrets.RECIPIENT_EMAIL_2 }},${{ secrets.RECIPIENT_EMAIL_3 }}
           from: "Serviço de automação <${{ secrets.SENDER_EMAIL }}>"
           body: "A tarefa foi finalizada. Confira o arquivo em anexo."
           attachments: result_app_o_15.txt,result_app_o_8.txt
