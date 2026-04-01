@@ -73,10 +73,10 @@ namespace LotteryCrawler.Core.Display
 
         public static void ShowStudyAppResults(int[][] results)
         {
-            Console.WriteLine("LotteryCrawler.Bet - Showing results");
-            Console.WriteLine();
+            
             if (results.Length != 0)
             {
+                OutputFormatter.PrintSectionTitle("LotteryCrawler.Bet - Showing results");
                 var rowFormat = "{0,-4} | {1,-70} ";
                 string header1 = $"#";
                 string header2 = "Result";
@@ -92,7 +92,64 @@ namespace LotteryCrawler.Core.Display
 
                     Console.WriteLine(content);
                 }
-                Console.WriteLine();
+
+
+                OutputFormatter.PrintLineSeparator();
+                OutputFormatter.PrintSectionTitle("Digit study");
+                var allResults = results.SelectMany(t => t.Select(a => a.ToString("0#")));
+                var rightSide = allResults.GroupBy(x => x[1])
+                        .OrderByDescending(X => X.Count())
+                        .Select(x => $"{x.Key} - Qty: {x.Count()}");
+                var leftSide = allResults.GroupBy(x => x[0])
+                        .OrderByDescending(X => X.Count())
+                        .Select(x => $"{x.Key} - Qty: {x.Count()}");
+                Console.WriteLine("Right side:");
+                Console.WriteLine(string.Join(Environment.NewLine, rightSide));
+                Console.WriteLine("Left side:");
+                Console.WriteLine(string.Join(Environment.NewLine, leftSide));
+
+                OutputFormatter.PrintSectionTitle("Average study");
+                var rowFormat3Headers = "{0,-4} | {1,-70} | {2,-30}";
+                var headerContentAvg = string.Format(rowFormat3Headers, header1, header2, "AVG");
+                Console.WriteLine(headerContentAvg);
+                for (int resultIndex = 0; resultIndex < results.Length; resultIndex++)
+                {
+                    int[] item = results[resultIndex];
+                    string result = string.Join(" - ", item);
+                    var content = string.Format(rowFormat3Headers, resultIndex + 1, result, item.Average());
+                    Console.WriteLine(content);
+                }
+
+                OutputFormatter.PrintLineSeparator();
+                Console.WriteLine($"Min AVG:{results.Min(x => x.Average())}" +
+                                  $"Max AVG:{results.Max(x => x.Average())}"+
+                                  $"AVG:{results.Average(x => x.Average())}");
+                OutputFormatter.PrintLineSeparator();
+
+                OutputFormatter.PrintSectionTitle("Difference study");
+                var rowFormat4Headers = "{0,-4} | {1,-70} | {2,-30} | {3,-30}";
+                var headerContentDiff = string.Format(rowFormat4Headers, header1, header2, "Diff between elements", "Diff avg");
+                double minDiffAvg = 0; double maxDiffAvg = 0;
+                Console.WriteLine(headerContentDiff);
+                for (int resultIndex = 0; resultIndex < results.Length; resultIndex++)
+                {
+                    int[] item = results[resultIndex].OrderBy(a => a).ToArray();
+                    string result = string.Join(" - ", item);
+
+                    var value = item.Select((elemnt, index) => index == 0 ? elemnt - 0 : elemnt - item[index - 1]);
+                    var content = string.Format(rowFormat4Headers, resultIndex + 1, result, string.Join("-", value), value.Average());
+                    if (minDiffAvg  == 0 || value.Average() < minDiffAvg )
+                        minDiffAvg = value.Average();
+
+                    if( value.Average() > maxDiffAvg )
+                        maxDiffAvg = value.Average() ;
+                        
+                    Console.WriteLine(content);
+                }
+
+                OutputFormatter.PrintLineSeparator();
+                Console.WriteLine($"Min diff AVG:{minDiffAvg} Max diff AVG:{maxDiffAvg}");
+                OutputFormatter.PrintLineSeparator();
             }
         }
 
@@ -154,6 +211,7 @@ namespace LotteryCrawler.Core.Display
             Console.WriteLine("  - If no numberOfBets provided, it will be generated just a single bet");
             Console.WriteLine("  - Use lowercase single-character options as shown.");
         }
+
         public static void ShowPreciseResults(IEnumerable<Card> cardsInfo, bool verbosityMode = false)
         {
             OutputFormatter.PrintLineSeparator();
@@ -209,7 +267,7 @@ namespace LotteryCrawler.Core.Display
                     string col4Value = DisplayPrecisionSum(item.ResultGame, item.History.Length);
                     string? col5Value = ToStringSimple(item.FinalGame);
                     string col6Value = DisplayPrecisionSum(item.FinalGame, item.History.Length);
-                    string col7Value = string.Join(",", item.MatchedNumbers);
+                    string col7Value = string.Join(",", item.MatchedNumbers.OrderBy(x=> x));
 
                     var content = string.Format(rowFormatSummary, col1Value, col2Value, col3Value, col4Value, col5Value, col6Value, col7Value);
                     Console.WriteLine(content);
@@ -230,35 +288,38 @@ namespace LotteryCrawler.Core.Display
                                     ManyEffectiveDraws = x.Count()
                                 });
 
-                var summaryRowFormat = "{0,-20} | {1,-20} | {2,-50}| {3,-20}";                
+                var summaryRowFormat = "{0,-20} | {1,-20} | {2,-30}| {3,-20}";
                 var historyCount = cardsInfo.Max(x => x.History.Length);
 
-                Print(string.Format(summaryRowFormat, "Engine", "Max match", "Bets with more than 3 numbers matched", "Precision (%)"), finalSummary, summaryRowFormat, historyCount);
-                var finalSummary2 = valuableResults.GroupBy(x => new { Engine = x.EngineName, MatchCount = x.MatchedNumbers.Count() })
+                Print(string.Format(summaryRowFormat, "Engine", "Max match", "Bets with > 3 numbers matched", "Precision (%)"), finalSummary, summaryRowFormat, historyCount);
+
+                var finalSummary2 = valuableResults.GroupBy(x => new { Engine = x.EngineName, MatchCount = x.MatchedNumbers.Count(), MissedNumbers = x.ResultGame.Select(x=>x.Number).Except(x.MatchedNumbers).ToList() })
                                 .OrderByDescending(g => g.Key.MatchCount)
                                 .ThenByDescending(x => x.Sum(z => z.MatchedNumbers.Count()))
                                 .Select(x => new DisplaySummaryInfo3
                                 {
                                     EngineName = x.Key.Engine,
                                     MatchCount = x.Key.MatchCount,
-                                    EffectiveDrawsHaving = x.Count()
-                                });
+                                    EffectiveDrawsHaving = x.Count(),
+                                    MissedNumbers = string.Join(" - ", x.Key.MissedNumbers)
+                                });;
 
                 OutputFormatter.PrintLineSeparator();
-                Print2(string.Format(summaryRowFormat, "Engine", "Match count", "Number of batchs having this", "Precision (%)"), finalSummary2, summaryRowFormat, historyCount);
+                var summaryRowFormat2 = "{0,-20} | {1,-20} | {2,-30} | {3,-20} | {4,-20}";
+                Print2(string.Format(summaryRowFormat2, "Engine", "Match count", "Number of batchs having this", "Precision (%)", "Missed Numbers"), finalSummary2, summaryRowFormat2, historyCount);
 
                 var classifyingAlgorithms = valuableResults.GroupBy(x => x.EngineName)
                                 .Select(k => new DisplaySummaryInfo
                                 {
                                     Summary = k.Key,
                                     Weight =
-                                    k.Where(a => a.MatchedNumbers.Count() == 6).Sum(a => a.MatchedNumbers.Count() * 2)
-                                    + k.Where(a => a.MatchedNumbers.Count() == 5).Sum(a => a.MatchedNumbers.Count() * 1.3)
+                                    k.Where(a => a.MatchedNumbers.Count() == 6).Sum(a => a.MatchedNumbers.Count() * 300)
+                                    + k.Where(a => a.MatchedNumbers.Count() == 5).Sum(a => a.MatchedNumbers.Count() * 33)
                                     + k.Where(a => a.MatchedNumbers.Count() == 4).Sum(a => a.MatchedNumbers.Count())
                                 }).OrderByDescending(x => x.Weight).ToList();
 
                 OutputFormatter.PrintLineSeparator();
-                Printout("Top best 5 algorithms 6 * 2 |  5 * 1.3 | 4 * 1", [.. classifyingAlgorithms.Take(5)]);
+                Printout("Top best 5 algorithms 6 * 300 |  5 * 33 | 4 * 1", [.. classifyingAlgorithms.Take(5)]);
 
                 OutputFormatter.PrintLineSeparator();
                 Printout("Top 5 worst algorithms:", [.. classifyingAlgorithms.TakeLast(5).OrderBy(x => x.Weight)]);
@@ -294,7 +355,8 @@ namespace LotteryCrawler.Core.Display
                     item.EngineName,
                     item.MatchCount,
                     item.EffectiveDrawsHaving,
-                    precision.ToString("0.##%")));
+                    precision.ToString("0.##%"),
+                    item.MissedNumbers));
             }
         }
 
@@ -341,6 +403,7 @@ namespace LotteryCrawler.Core.Display
             public string EngineName { get; set; } = string.Empty;
             public int MatchCount { get; set; }
             public int EffectiveDrawsHaving { get; set; }
+            public string MissedNumbers { get; internal set; } = string.Empty;
         }
     }
 }

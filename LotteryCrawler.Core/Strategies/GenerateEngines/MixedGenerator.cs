@@ -1,11 +1,14 @@
-﻿namespace LotteryCrawler.Core.Strategies.GenerateEngines
+﻿using LotteryCrawler.Core.Atributes;
+
+namespace LotteryCrawler.Core.Strategies.GenerateEngines
 {
     public class MixedGenerator: IGenerateEngine
     {
+        [RankAttribute(3)]
         public MixedGenerator(string engineId)
         {
             this.Engine1 = new PredictorEngine();
-            this.Engine2 = new Lottery();
+            this.Engine2 = new Lottery("MixedGenerator");
             this.EngineId = engineId;
         }
 

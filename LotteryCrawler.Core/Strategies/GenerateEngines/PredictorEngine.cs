@@ -1,6 +1,8 @@
-﻿namespace LotteryCrawler.Core.Strategies.GenerateEngines
+﻿using LotteryCrawler.Core.Atributes;
+
+namespace LotteryCrawler.Core.Strategies.GenerateEngines
 {
-    [Obsolete("Worst generator")]
+    [RankAttribute(1)]
     public class PredictorEngine : IGenerateEngine
     {
         private static Random _rng = new Random();

@@ -1,3 +1,5 @@
+using LotteryCrawler.Core.Atributes;
+
 namespace LotteryCrawler.Core.Strategies.GenerateEngines
 {
     /// <summary>
@@ -15,6 +17,7 @@ namespace LotteryCrawler.Core.Strategies.GenerateEngines
     /// Selection from the filtered pool is uniform-random (no weighting), exactly like
     /// the original Lottery engine.  This isolates the effect of pool size on precision.
     /// </summary>
+    [Rank(3)]
     internal class AdaptiveLotteryEngine : IGenerateEngine
     {
         private readonly string _label;

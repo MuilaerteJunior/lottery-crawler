@@ -5,7 +5,7 @@ public class CoreConfig
 {
     public CoreConfig()
     {
-        var lottery = new Lottery();
+        var lottery = new Lottery("lottery");
         var optimized = new LotteryOptimized();
         var lottery2 = new Lottery2();
         var lottery3 = new Lottery3();
@@ -17,16 +17,11 @@ public class CoreConfig
         var expDecayEngines = new List<IReadEngine> { new ReducePresenceBasedOnPreviousResults(), new ExponentialDecayReadEngine() };
         var decimalIntervalEngines = new List<IReadEngine> { new ReducePresenceBasedOnPreviousResults(), new EvaluatePresenceBasedOnDecimals(), new IntervalReadEngine() };
         var expDecayIntervalEngines = new List<IReadEngine> { new ReducePresenceBasedOnPreviousResults(), new ExponentialDecayReadEngine(), new IntervalReadEngine() };
-
-        // --- Normalised pipelines (MinMaxNormalizer always last) ---
-        // These eliminate inter-engine scale mismatch, boosting TopN / Consensus precision
         var normOldEngines          = new List<IReadEngine> { new ReducePresenceBasedOnPreviousResults(), new EvaluatePresenceBasedOnDecimals(), new MinMaxNormalizerReadEngine() };
         var normExpDecayEngines     = new List<IReadEngine> { new ReducePresenceBasedOnPreviousResults(), new ExponentialDecayReadEngine(), new MinMaxNormalizerReadEngine() };
         var normExpDecayInterval    = new List<IReadEngine> { new ReducePresenceBasedOnPreviousResults(), new ExponentialDecayReadEngine(), new IntervalReadEngine(), new MinMaxNormalizerReadEngine() };
         var normSimilarityExpDecay  = new List<IReadEngine> { new ReducePresenceBasedOnPreviousResults(), new SimilarityWeightedReadEngine(), new ExponentialDecayReadEngine(), new MinMaxNormalizerReadEngine() };
         var normFullStack           = new List<IReadEngine> { new ReducePresenceBasedOnPreviousResults(), new ExponentialDecayReadEngine(), new IntervalReadEngine(), new SimilarityWeightedReadEngine(), new MinMaxNormalizerReadEngine() };
-
-        // --- Rank-aggregation pipelines (Borda Count — scale-immune combination) ---
         var rankAgg = new List<IReadEngine>
         {
             new RankAggregationReadEngine(
@@ -44,8 +39,6 @@ public class CoreConfig
                 new SimilarityWeightedReadEngine()),
             new MinMaxNormalizerReadEngine()
         };
-
-        // --- Co-occurrence pipelines ---
         var coOccurrenceNorm = new List<IReadEngine>
         {
             new ReducePresenceBasedOnPreviousResults(),
@@ -62,12 +55,26 @@ public class CoreConfig
             new MinMaxNormalizerReadEngine()
         };
 
-        // --- Frequency-trend pipelines (gentle boost for trending numbers) ---
         var trendEngines = new List<IReadEngine> { new ReducePresenceBasedOnPreviousResults(), new EvaluatePresenceBasedOnDecimals(), new FrequencyTrendReadEngine() };
 
         this.AvailableEngines = new Dictionary<string, Tuple<List<IReadEngine>, IGenerateEngine, int?>>
                 {
                     { "o", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines, lottery, default(int?)) },
+                    { "ozzzz", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines, new Lottery("ozzzz"), 306) },
+                    //{ "on", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines, new NewLottery(), default(int?)) },
+                    { "zz", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(new List<IReadEngine>() { new TestingResults() } , new Lottery("zz") {}, default(int?)) },
+                    { "zzz", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(
+                        new List<IReadEngine>() { new TestingResults() ,  new ReducePresenceBasedOnPreviousResults(), new EvaluatePresenceBasedOnDecimals() } , 
+                        new Lottery("zzz"), default(int?)) },
+                    { "kkk", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(new List<IReadEngine>() { new TestingResults() ,  new ReducePresenceBasedOnPreviousResults(), new EvaluatePresenceBasedOnDecimals() } , new SimpleLottery("kkk"), default(int?)) },                    
+                    { "wpzzzz", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines,    new WeightedProbabilityEngine("wpzzzz"), default(int?)) },
+                    { "wpzzxcasd", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(recentWindowEngines,    new Lottery("wpzzxcasd"), default(int?)) },
+                    { "bd_nois", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines,new BalancedDecadeEngine("bd_nois"), default(int?)) },
+                    { "bd_nois222", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(expDecayIntervalEngines,new Lottery("bd_nois222"), default(int?)) },
+                    { "cp3",  new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines,  new ConsensusPoolLotteryEngine("cp3"),  default(int?)) },
+                    { "cp4",  new Tuple<List<IReadEngine>, IGenerateEngine, int?>(trendEngines.Union(oldEngines).ToList(),  new ConsensusPoolLotteryEngine("cp4"),  default(int?)) },
+                    //{ "cp5",  new Tuple<List<IReadEngine>, IGenerateEngine, int?>(trendEngines.Union(oldEngines).ToList(),  new NewLottery4(),  default(int?)) },
+                    //{ "cp65",  new Tuple<List<IReadEngine>, IGenerateEngine, int?>(trendEngines,  new NewLottery5(),  default(int?)) },
                     { "o1", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines, lottery2, default(int?)) },
                     { "l", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines, lottery3, default(int?)) },
                     { "l2", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines, optimized, default(int?)) },
@@ -75,7 +82,7 @@ public class CoreConfig
                     { "m1", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines, new MixedGenerator("Mixed1"), default(int?)) },
                     { "m2", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(newEngine, new MixedGenerator("Mixed2"), default(int?)) },
                     { "m3", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines.Union(newEngine).ToList(), new MixedGenerator("Mixed3"), default(int?)) },
-                    { "of", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines, lottery, 306) },
+                    //{ "of", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines, lottery, 306) },
                     { "mf1", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines, new MixedGenerator("(Fixed) Mixed1"), 306) },
                     { "mf2", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(newEngine, new MixedGenerator("(Fixed) Mixed2"), 306) },
                     { "mf3", new Tuple<List<IReadEngine>, IGenerateEngine, int?>(oldEngines.Union(newEngine).ToList(), new MixedGenerator("(Fixed) Mixed3"), 306) },

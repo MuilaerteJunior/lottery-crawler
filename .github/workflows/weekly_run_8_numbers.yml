@@ -15,19 +15,32 @@ jobs:
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'          
+          dotnet-version: '10.0.x'    
+
+      - name: Build and Run App - Lottery
+        run: |
+          dotnet restore
+          dotnet run o 15 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_o_15.txt
+          dotnet run o 8 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_o_8.txt 
+          
+      - name: Send Email - Everybody
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.mailgun.org
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Apostas da mega sena - ${{ github.run_id }}"
+          to: ${{ secrets.RECIPIENT_EMAIL_1 }},${{ secrets.RECIPIENT_EMAIL_2 }},${{ secrets.RECIPIENT_EMAIL_3 }}
+          from: "Serviço de automação <${{ secrets.SENDER_EMAIL }}>"
+          body: "A tarefa foi finalizada. Confira o arquivo em anexo."
+          attachments: result_app_o_15.txt,result_app_o_8.txt      
               
       - name: Build and Run Study
         run: |
           dotnet restore
           dotnet run s 15 --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_study_15.txt
           dotnet run s 8 --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_study_8.txt
-
-      - name: Build and Run App - Lottery
-        run: |
-          dotnet restore
-          dotnet run o 15 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_o_15.txt
-          dotnet run o 8 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_o_8.txt
 
       - name: Send Email - Jr
         uses: dawidd6/action-send-mail@v3
@@ -42,16 +55,4 @@ jobs:
           body: "The weekly task has completed. Please find the log attached."
           attachments: result_app_o_15.txt,result_app_o_8.txt,result_study_15.txt,result_study_8.txt
 
-        
-      - name: Send Email - Everybody
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.mailgun.org
-          server_port: 587
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "Apostas da mega sena - ${{ github.run_id }}"
-          to: ${{ secrets.RECIPIENT_EMAIL_1 }},${{ secrets.RECIPIENT_EMAIL_2 }},${{ secrets.RECIPIENT_EMAIL_3 }}
-          from: "Serviço de automação <${{ secrets.SENDER_EMAIL }}>"
-          body: "A tarefa foi finalizada. Confira o arquivo em anexo."
-          attachments: result_app_o_15.txt,result_app_o_8.txt
+     

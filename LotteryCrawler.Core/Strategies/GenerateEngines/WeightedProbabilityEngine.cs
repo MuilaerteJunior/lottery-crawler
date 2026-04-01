@@ -1,3 +1,5 @@
+using LotteryCrawler.Core.Atributes;
+
 namespace LotteryCrawler.Core.Strategies.GenerateEngines
 {
     /// <summary>
@@ -8,6 +10,7 @@ namespace LotteryCrawler.Core.Strategies.GenerateEngines
     /// No retry loop is needed because the algorithm always produces exactly
     /// maxNumOfElements picks deterministically.
     /// </summary>
+    [Rank(6)]
     internal class WeightedProbabilityEngine : IGenerateEngine
     {
         private readonly string _label;

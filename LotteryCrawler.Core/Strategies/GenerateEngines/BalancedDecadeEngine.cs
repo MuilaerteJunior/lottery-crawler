@@ -1,3 +1,5 @@
+using LotteryCrawler.Core.Atributes;
+
 namespace LotteryCrawler.Core.Strategies.GenerateEngines
 {
     /// <summary>
@@ -10,7 +12,8 @@ namespace LotteryCrawler.Core.Strategies.GenerateEngines
     /// For the standard 6-number / 60-range case, each decade gets exactly 1 slot.
     /// For other configurations the slots are allocated proportionally to the aggregate
     /// probability weight of each decade.
-    /// </summary>
+    /// </summary>    
+    [Rank(6)]
     internal class BalancedDecadeEngine : IGenerateEngine
     {
         private readonly string _label;

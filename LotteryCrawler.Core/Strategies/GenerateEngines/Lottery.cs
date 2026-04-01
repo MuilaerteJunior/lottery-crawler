@@ -1,13 +1,18 @@
-﻿namespace LotteryCrawler.Core.Strategies.GenerateEngines
-{
+﻿using LotteryCrawler.Core.Atributes;
 
+namespace LotteryCrawler.Core.Strategies.GenerateEngines
+{
+    [Rank(6)]
     internal class Lottery : IGenerateEngine
     {
-        public Lottery()
+        private readonly string _label;
+
+        public Lottery(string label)
         {
+            _label = label;
         }
 
-        public virtual string? Identification => "Lottery";
+        public virtual string? Identification => _label;
 
         public virtual BetNumber[] GenerateBet(int[][] history, Card options, short maxNumOfElements)
         {

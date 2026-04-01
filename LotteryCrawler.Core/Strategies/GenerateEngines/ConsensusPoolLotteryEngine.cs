@@ -1,3 +1,4 @@
+using LotteryCrawler.Core.Atributes;
 using LotteryCrawler.Core.Strategies.ReadEngines;
 
 namespace LotteryCrawler.Core.Strategies.GenerateEngines
@@ -23,6 +24,7 @@ namespace LotteryCrawler.Core.Strategies.GenerateEngines
     ///   topPerPipeline (default 35): how many numbers each pipeline keeps.
     ///   minConsensus   (default 2):  minimum pipeline count for consensus membership.
     /// </summary>
+    [Rank(6)]
     internal class ConsensusPoolLotteryEngine : IGenerateEngine
     {
         private readonly string _label;

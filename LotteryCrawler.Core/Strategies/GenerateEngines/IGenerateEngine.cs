@@ -2,7 +2,7 @@
 {
     public interface IGenerateEngine
     {
-        string? Identification { get; }
+        string? Identification { get;  }
         BetNumber[] GenerateBet(int[][] history, Card options, short maxNumOfElements);
     }
 }

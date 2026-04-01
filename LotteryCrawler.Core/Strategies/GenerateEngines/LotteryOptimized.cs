@@ -2,7 +2,12 @@
 {
     internal class LotteryOptimized : Lottery
     {
-        public override string? Identification => "LotteryOptimized";
+        public LotteryOptimized(): base("LotteryOptimized")
+        {
+                
+        }
+        //public override string? Identification => "LotteryOptimized";
+
         public const int LIMIT_GENERATION = 1000;
 
         public override BetNumber[] GenerateBet(int[][] history, Card options, short maxNumOfElements)

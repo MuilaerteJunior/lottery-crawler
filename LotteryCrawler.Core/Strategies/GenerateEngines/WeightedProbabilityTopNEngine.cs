@@ -1,3 +1,5 @@
+using LotteryCrawler.Core.Atributes;
+
 namespace LotteryCrawler.Core.Strategies.GenerateEngines
 {
     /// <summary>
@@ -25,7 +27,8 @@ namespace LotteryCrawler.Core.Strategies.GenerateEngines
     ///   This engine is deterministic: given the same history and the same read
     ///   engines, it always produces the same bet. Use WeightedProbabilityConsensusEngine
     ///   for a stochastic alternative that approaches the same ranking with diversity.
-    /// </summary>
+    /// </summary>,
+    [RankAttribute(1)]
     internal class WeightedProbabilityTopNEngine : IGenerateEngine
     {
         private readonly string _label;
