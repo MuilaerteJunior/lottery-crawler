@@ -4,8 +4,51 @@ using System.Net.Http;
 
 namespace LotteryCrawler.Core.Crawlers
 {
+
+    public class LotoFacil : LotteryService<ApostaDTO>
+    {
+        public LotoFacil(HttpClient httpClient) : base(httpClient)
+        {
+        }
+
+        public override string GetUrlAddress() => "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil";
+
+        public override int ObterNumeroResultadoMaisRecente()
+        {
+            var jogoMaisRecente = ObterJogo(null);
+            if (jogoMaisRecente == null)
+                throw new Exception("Não foi possível obter o número do resultado mais recente.");
+            return jogoMaisRecente.numero;
+        }
+        public override Queue<Sorteio> ObterTodosJogos(int[] idJogos)
+        {
+            var filaSorteios = new Queue<Sorteio>();
+            Parallel.ForEach(idJogos, (idJogo) =>
+            {
+                try
+                {
+                    var jogo = ObterJogo(idJogo);
+                    if (jogo != null && jogo.listaDezenas != null && jogo.dataApuracao != null)
+                    {
+                        filaSorteios.Enqueue(new Sorteio()
+                        {
+                            Numbers = [.. jogo.listaDezenas.Select(a => Convert.ToInt32(a))],
+                            Date = DateTime.ParseExact(jogo.dataApuracao, "dd/MM/yyyy", System.Globalization.CultureInfo.CurrentCulture),
+                            Id = jogo.numero,
+                        });
+                    }
+                }
+                catch
+                {
+                }
+            });
+            return filaSorteios;
+        }
+    }
     public class MegaSena : LotteryService<ApostaDTO>
     {
+
+        public override string GetUrlAddress() => "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena";
 
         //https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena/2526
         //https://servicebus2.caixa.gov.br/portaldeloterias/_arquivos/loterias/D_megase.zip

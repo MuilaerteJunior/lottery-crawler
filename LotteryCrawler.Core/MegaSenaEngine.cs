@@ -4,86 +4,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 [assembly: InternalsVisibleTo("LotteryCrawler.App")]
 [assembly: InternalsVisibleTo("LotteryCrawler.Study")]
 
 namespace LotteryCrawler.Core
 {
-    internal class MegaSenaEngine
+    internal class MegaSenaEngine : BaseLotteryEngine
     {
-        public MegaSenaEngine(LotteryService<ApostaDTO> lotteryService)
+        public MegaSenaEngine(LotteryService<ApostaDTO> lotteryService) : base(lotteryService)
         {
-            _lotteryService = lotteryService;
         }
 
-        private const string RESULTADOS_JOGOS_CACHE_NOME_ARQUIVO = "jogos.txt";
-        private static int? jogoMaisRecente = default;
-        private static LotteryService<ApostaDTO>? _lotteryService;
-
-        public int[][] GetPreviousResults()
+        protected override string RESULTADOS_JOGOS_CACHE_NOME_ARQUIVO => "jogos.txt";
+        public override int[]? GetOptions()
         {
-            var previousResults = GetAllLoteryResults().ToArray();
-            if (previousResults == null)
-                throw new NotSupportedException("Unable to retrieve previous results!");
-            
-            return previousResults;
+            return Enumerable.Range(1, 60).ToArray();
         }
 
-        private static int[][] GetAllLoteryResults()
+
+        public override Func<Card, bool> VerifyMatch1()
         {
-            if ( _lotteryService == null)
-                throw new NullReferenceException("_lotteryService");
-            if (!jogoMaisRecente.HasValue)
-                jogoMaisRecente = _lotteryService.ObterNumeroResultadoMaisRecente();
-
-            var missingGames = Enumerable.Range(1, jogoMaisRecente.Value);
-            var allGames = new int[missingGames.Count()][];
-
-            if (File.Exists(RESULTADOS_JOGOS_CACHE_NOME_ARQUIVO))
-            {
-                var fileContent = File.ReadAllText(RESULTADOS_JOGOS_CACHE_NOME_ARQUIVO);
-                var fileContentAsMatrix = JsonSerializer.Deserialize<int[][]>(fileContent);
-                if (fileContentAsMatrix != null)
-                {
-                    for (int index = 0; index < fileContentAsMatrix.Length; index++)
-                    {
-                        allGames[index] = fileContentAsMatrix[index];
-                    }
-
-                    var existingInCacheGames = allGames.Select((a, i) => new { a, i }).Where(b => b.a != null).Select(d => d.i + 1);
-                    missingGames = missingGames.Except(existingInCacheGames);
-                }
-            }
-
-            if (missingGames.Any())
-            {
-                var jogos = _lotteryService.ObterTodosJogos(missingGames.ToArray());
-                var notfoundFiles = new Queue<int>();
-                foreach (var jogo in jogos)
-                {
-                    try
-                    {
-                        if (jogo != null)
-                            allGames[jogo.Id - 1] = jogo.Numbers.ToArray();
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-
-                using (var fileJogos = new StreamWriter(RESULTADOS_JOGOS_CACHE_NOME_ARQUIVO, false))
-                {
-                    fileJogos.WriteLine(JsonSerializer.Serialize(allGames));
-                }
-
-                Console.WriteLine($"Games not found: {string.Join(',', allGames.Select((a, i) => new { a, i }).Where(b => b.a == null).Select(d => d.i + 1))}");
-                Console.WriteLine("Cache file saved!");
-            }
-
-            return allGames;
+            return a => a.MatchedNumbers.Count() == 6;
         }
+        public override Func<Card, bool> VerifyMatch2()
+        {
+            return a => a.MatchedNumbers.Count() == 5;
+        }
+        public override Func<Card, bool> VerifyMatch3()
+        {
+            return a => a.MatchedNumbers.Count() == 4;
+        }
+        public override Func<Card, bool> ValuableResult()
+        {
+            return a => a.MatchedNumbers.Count() > 3;
+        }
+
+
     }
 }
 

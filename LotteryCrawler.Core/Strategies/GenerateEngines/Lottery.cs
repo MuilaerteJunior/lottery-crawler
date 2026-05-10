@@ -2,12 +2,14 @@
 
 namespace LotteryCrawler.Core.Strategies.GenerateEngines
 {
+
+
     [Rank(6)]
-    internal class Lottery : IGenerateEngine
+    internal class Lottery : BaseEngine, IGenerateEngine
     {
         private readonly string _label;
 
-        public Lottery(string label)
+        public Lottery(string label) : base(60)
         {
             _label = label;
         }
@@ -32,5 +34,15 @@ namespace LotteryCrawler.Core.Strategies.GenerateEngines
 
             return finalBid.Select(x => new BetNumber(x, options.PresenceElements[x],0)).ToArray();
         }
+
+        //private BetNumber[] Return(int[] info, Dictionary<int, decimal> options)
+        //{
+        //    foreach (var item in info)
+        //    {
+        //        //_betOptions[item].Number = item;
+        //        _betOptions[item].PositiveProbability = options[item];
+        //    }
+        //    return _betOptions;
+        //}
     }
 }

@@ -1,5 +1,8 @@
-﻿namespace LotteryCrawler
+﻿using System;
+
+namespace LotteryCrawler
 {
+
     public class Card
     {
         public Card(BetNumber[] numbers)
@@ -25,7 +28,7 @@
         public Dictionary<int, decimal> PresenceElements { get; private set; } = new Dictionary<int, decimal>();
         public BetNumber[] ResultGame { get; }
         public BetNumber[] FinalGame { get; }
-        public IEnumerable<int> MatchedNumbers{ get => FinalGame.Select(x=> x.Number).Intersect(ResultGame.Select(x => x.Number));  }
+        public IEnumerable<int> MatchedNumbers{ get => FinalGame!.Select(x=> x.Number).Intersect(ResultGame!.Select(x => x.Number));  }
         public int[][] History { get; }
         public string EngineName { get; }
         public int GameIndex { get; internal set; }

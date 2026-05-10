@@ -1,0 +1,35 @@
+name: Weekly App - Stressing
+
+on:
+  schedule:
+    - cron: '0 0 * * 5'
+  workflow_dispatch: 
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'    
+
+      - name: Executing stress mode
+        run: |
+          dotnet restore
+          dotnet run x 12 --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_stress.txt
+          
+      - name: Send Email - Junior
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.mailgun.org
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Apostas da mega sena - ${{ github.run_id }}"
+          to: ${{ secrets.RECIPIENT_EMAIL_1 }}
+          from: "Serviço de automação <${{ secrets.SENDER_EMAIL }}>"
+          body: "Stress mode executado, confira o arquivo em anexo."

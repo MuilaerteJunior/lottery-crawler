@@ -21,8 +21,13 @@
         /// Example:
         /// --------------------------------------------------
         /// </summary>
-        public static void PrintLineSeparator(int size = DELIMITER_COUNT)
+        public static void PrintLineSeparator(int size = DELIMITER_COUNT, bool readKey = false)
         {
+            if ( readKey)
+            {
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+            }
             Console.WriteLine(new string('-', size));
         }
 

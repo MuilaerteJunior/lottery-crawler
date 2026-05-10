@@ -18,7 +18,23 @@ namespace LotteryCrawler.Study
                 {
                     s.AddHttpClient<LotteryService<ApostaDTO>, MegaSena>
                     (
-                        c => c.BaseAddress = new Uri("https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena")
+                        //c => c.BaseAddress = new Uri("https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena")
+                    )
+                    .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5), (response, a, currentTry, ctx) =>
+                    {
+                        Console.WriteLine($"Failed - {response.Result.StatusCode}. Current try: {currentTry}");
+                    }))
+                    .AddPolicyHandler(request =>
+                    {
+                        if (request.Method == HttpMethod.Get)
+                            return timeoutPolicy;
+
+                        return Policy.NoOpAsync<HttpResponseMessage>();
+                    });
+
+                    s.AddHttpClient<LotteryService<ApostaDTO>, LotoFacil>
+                    (
+                        //c => c.BaseAddress = new Uri("https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil")
                     ).AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5), (response, a, currentTry, ctx) =>
                     {
                         Console.WriteLine($"Failed - {response.Result.StatusCode}. Current try: {currentTry}");
@@ -30,6 +46,7 @@ namespace LotteryCrawler.Study
 
                         return Policy.NoOpAsync<HttpResponseMessage>();
                     });
+
 
                     s.Configure<ConfigVisualizationOptions>(c.Configuration.GetSection("ConfigVisualizationOptions"));                    
                     s.AddTransient<StudyApp>();

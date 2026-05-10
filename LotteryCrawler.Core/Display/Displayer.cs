@@ -93,7 +93,7 @@ namespace LotteryCrawler.Core.Display
                     Console.WriteLine(content);
                 }
 
-
+                //Console.ReadKey();
                 OutputFormatter.PrintLineSeparator();
                 OutputFormatter.PrintSectionTitle("Digit study");
                 var allResults = results.SelectMany(t => t.Select(a => a.ToString("0#")));
@@ -120,12 +120,14 @@ namespace LotteryCrawler.Core.Display
                     Console.WriteLine(content);
                 }
 
+                //Console.ReadKey();
                 OutputFormatter.PrintLineSeparator();
                 Console.WriteLine($"Min AVG:{results.Min(x => x.Average())}" +
                                   $"Max AVG:{results.Max(x => x.Average())}"+
                                   $"AVG:{results.Average(x => x.Average())}");
                 OutputFormatter.PrintLineSeparator();
 
+                //Console.ReadKey();
                 OutputFormatter.PrintSectionTitle("Difference study");
                 var rowFormat4Headers = "{0,-4} | {1,-70} | {2,-30} | {3,-30}";
                 var headerContentDiff = string.Format(rowFormat4Headers, header1, header2, "Diff between elements", "Diff avg");
@@ -147,6 +149,7 @@ namespace LotteryCrawler.Core.Display
                     Console.WriteLine(content);
                 }
 
+                //Console.ReadKey();
                 OutputFormatter.PrintLineSeparator();
                 Console.WriteLine($"Min diff AVG:{minDiffAvg} Max diff AVG:{maxDiffAvg}");
                 OutputFormatter.PrintLineSeparator();
@@ -212,8 +215,108 @@ namespace LotteryCrawler.Core.Display
             Console.WriteLine("  - Use lowercase single-character options as shown.");
         }
 
-        public static void ShowPreciseResults(IEnumerable<Card> cardsInfo, bool verbosityMode = false)
+        //public static void ShowPreciseResults2(Ranking info, bool verbosityMode = false, bool readKey = false)
+        //{
+        //    readKey = true;//TODO:remove this
+        //    //
+        //    OutputFormatter.PrintLineSeparator();
+        //    if (info != null)
+        //    {
+        //        var rowFormat = "{0,-15} | {1,-30} | {2,-60} | {3,-20}  | {4,-65} | {5,-15} | {6,-50}";
+        //        if (verbosityMode)
+        //        {
+        //            string header1 = $"Engine";
+        //            string header2 = "How many bets considered?";
+        //            string header3 = "Expected game";
+        //            string header4 = "Precision Sum";
+        //            string header5 = "Bet generated";
+        //            string header6 = "Precision Sum";
+        //            string header7 = "Matched numbers";
+        //            var headerContent = string.Format(rowFormat, header1, header2, header3, header4, header5, header6, header7);
+
+        //            Console.WriteLine(headerContent);
+        //            OutputFormatter.PrintLineSeparator(headerContent.Length);
+
+        //            foreach (var item in info.Summary1)
+        //            {
+        //                string col1Value = item.EngineName;
+        //                string col2Value = item.History.Length.ToString();
+        //                string? col3Value = ToStringPrecision(item.ResultGame!);
+        //                string col4Value = DisplayPrecisionSum(item.ResultGame, item.History.Length);
+        //                string? col5Value = ToStringPrecision(item.FinalGame!);
+        //                string col6Value = DisplayPrecisionSum(item.FinalGame, item.History.Length);
+        //                string col7Value = string.Join(",", item.MatchedNumbers);
+
+        //                var content = string.Format(rowFormat, col1Value, col2Value, col3Value, col4Value, col5Value, col6Value, col7Value);
+
+        //                Console.WriteLine(content);
+        //            }
+        //        }
+        //        OutputFormatter.PrintSectionTitle("Analysis");
+        //        //var info = cardsInfo.Select(c => c.ResultGame.Sum(x => x.Number));
+        //        Console.WriteLine($"Average sum of expected games: {info.Average():0.##}");
+        //        Console.WriteLine($"Min Sum: {info.Min():0.##}");
+        //        Console.WriteLine($"Max sum: {info.Max():0.##}");
+
+
+        //        OutputFormatter.PrintSectionTitle("Summary of Engines Precision (Match count > 3)");
+        //        var valuableResults = cardsInfo.Where(a => a.MatchedNumbers.Count() > 3).OrderByDescending(x => x.MatchedNumbers.Count());
+        //        //var valuableResults = cardsInfo.Where(a => a.MatchedNumbers.Count() > 11).OrderByDescending(x => x.MatchedNumbers.Count());
+        //        var rowFormatSummary = "{0,-15} | {1,-8} | {2,-25} | {3,-8}  | {4,-25} | {5,-8} | {6,-25}";
+        //        foreach (var item in valuableResults)
+        //        {
+        //            string col1Value = item.EngineName;
+        //            string col2Value = item.History.Length.ToString();
+        //            string? col3Value = ToStringSimple(item.ResultGame);
+        //            string col4Value = DisplayPrecisionSum(item.ResultGame, item.History.Length);
+        //            string? col5Value = ToStringSimple(item.FinalGame);
+        //            string col6Value = DisplayPrecisionSum(item.FinalGame, item.History.Length);
+        //            string col7Value = string.Join(",", item.MatchedNumbers.OrderBy(x => x));
+
+        //            var content = string.Format(rowFormatSummary, col1Value, col2Value, col3Value, col4Value, col5Value, col6Value, col7Value);
+        //            Console.WriteLine(content);
+        //        }
+        //        OutputFormatter.PrintLineSeparator(readKey: readKey);
+
+        //        OutputFormatter.PrintSectionTitle("Performance summary:");
+
+
+        //        var finalSummary = valuableResults.GroupBy(x => x.EngineName)
+        //                        .OrderByDescending(X => X.Max(X => X.MatchedNumbers.Count()))
+        //                        .ThenByDescending(x => x.Count())
+        //                        .Select(x => new DisplaySummaryInfo2
+        //                        {
+        //                            EngineName = x.Key,
+        //                            MaxMatchCount = x.Max(a => a.MatchedNumbers.Count()),
+        //                            ManyEffectiveDraws = x.Count()
+        //                        });
+
+        //        var summaryRowFormat = "{0,-20} | {1,-20} | {2,-30}| {3,-20}";
+        //        var historyCount = cardsInfo.Max(x => x.History.Length);
+
+        //        Print(string.Format(summaryRowFormat, "Engine", "Max match", "Bets with > 3 numbers matched", "Precision (%)"), info.Summary1, summaryRowFormat, historyCount);
+
+        //        OutputFormatter.PrintLineSeparator();
+        //        var summaryRowFormat2 = "{0,-20} | {1,-20} | {2,-30} | {3,-20} | {4,-20}";
+        //        Print2(string.Format(summaryRowFormat2, "Engine", "Match count", "Number of batchs having this", "Precision (%)", "Missed Numbers"), info.Summary2, summaryRowFormat2, historyCount);
+
+        //        OutputFormatter.PrintLineSeparator();
+        //        Printout("Top best 5 algorithms 6 * 300 |  5 * 33 | 4 * 1", info.Best);
+
+        //        OutputFormatter.PrintLineSeparator();
+        //        Printout("Top 5 worst algorithms:", info.Worst);
+        //    }
+        //    else
+        //    {
+
+        //        Console.Write("Nothing to show");
+        //    }
+        //    OutputFormatter.PrintLineSeparator();
+        //}
+        public static void ShowPreciseResults(IEnumerable<Card> cardsInfo, bool verbosityMode = false, bool readKey =  false)
         {
+            //readKey = true;//TODO:remove this
+
             OutputFormatter.PrintLineSeparator();
             if (cardsInfo.Any())
             {
@@ -258,6 +361,7 @@ namespace LotteryCrawler.Core.Display
 
                 OutputFormatter.PrintSectionTitle("Summary of Engines Precision (Match count > 3)");
                 var valuableResults = cardsInfo.Where(a => a.MatchedNumbers.Count() > 3).OrderByDescending(x => x.MatchedNumbers.Count());
+                //var valuableResults = cardsInfo.Where(a => a.MatchedNumbers.Count() > 11).OrderByDescending(x => x.MatchedNumbers.Count());
                 var rowFormatSummary = "{0,-15} | {1,-8} | {2,-25} | {3,-8}  | {4,-25} | {5,-8} | {6,-25}";
                 foreach (var item in valuableResults)
                 {
@@ -272,8 +376,7 @@ namespace LotteryCrawler.Core.Display
                     var content = string.Format(rowFormatSummary, col1Value, col2Value, col3Value, col4Value, col5Value, col6Value, col7Value);
                     Console.WriteLine(content);
                 }
-                OutputFormatter.PrintLineSeparator();
-
+                OutputFormatter.PrintLineSeparator(readKey: readKey);
 
                 OutputFormatter.PrintSectionTitle("Performance summary:");
 
@@ -316,6 +419,10 @@ namespace LotteryCrawler.Core.Display
                                     k.Where(a => a.MatchedNumbers.Count() == 6).Sum(a => a.MatchedNumbers.Count() * 300)
                                     + k.Where(a => a.MatchedNumbers.Count() == 5).Sum(a => a.MatchedNumbers.Count() * 33)
                                     + k.Where(a => a.MatchedNumbers.Count() == 4).Sum(a => a.MatchedNumbers.Count())
+
+                                    //k.Where(a => a.MatchedNumbers.Count() == 15).Sum(a => a.MatchedNumbers.Count() * 300)
+                                    //+ k.Where(a => a.MatchedNumbers.Count() == 14).Sum(a => a.MatchedNumbers.Count() * 33)
+                                    //+ k.Where(a => a.MatchedNumbers.Count() == 13).Sum(a => a.MatchedNumbers.Count())
                                 }).OrderByDescending(x => x.Weight).ToList();
 
                 OutputFormatter.PrintLineSeparator();
@@ -361,6 +468,14 @@ namespace LotteryCrawler.Core.Display
         }
 
         private static void Printout(string title, List<DisplaySummaryInfo> classifyingAlgorithms)
+        {
+            OutputFormatter.PrintSectionTitle(title);
+            foreach (var item in classifyingAlgorithms)
+            {
+                Console.WriteLine(string.Format("{0,-20} | {1,-20} ", item.Summary, item.Weight));
+            }
+        }
+        private static void Printout(string title, IList<RankingPositionInfo> classifyingAlgorithms)
         {
             OutputFormatter.PrintSectionTitle(title);
             foreach (var item in classifyingAlgorithms)

@@ -21,10 +21,10 @@ namespace LotteryCrawler.App
         private static string[] _menuOptions = { MENU_OPTION_HELP, MENU_OPTION_QUIT };
 
 
-        public App(IOptions<ConfigVisualizationOptions> config, LotteryService<ApostaDTO> _lott)
+        public App()//IOptions<ConfigVisualizationOptions> config, LotteryService<ApostaDTO> _lott)
         {
-            _viewConfig = config.Value;
-            _lottery = _lott;
+            //_viewConfig = config.Value;
+            //_lottery = _lott;
         }
 
         internal record UserInput(string optionMenu, int gamePosition, short howManyNumbers);
@@ -45,13 +45,24 @@ namespace LotteryCrawler.App
             return new UserInput(optionMenu.ToLower(), -1 , 6);
         }
 
+        private Tuple<int[], int[][]> Download(ILotteryEngine lotteryEngine)
+        {
+            var numberOptions = lotteryEngine.GetOptions() ?? Array.Empty<int>();
+            int[][] results = lotteryEngine.GetPreviousResults();
+            return Tuple.Create(numberOptions, results);
+        }
+
         public void Run(string[] args)
         {
             Console.WriteLine("Lottery...");            
             if (args != null && args.Length > 0)
             {
                 Console.WriteLine("Starting...");
-                var msEngine = new MegaSenaEngine(_lottery);
+
+                var msEngine = new MegaSenaEngine(new MegaSena(new HttpClient()));
+                var megaSena = Download(msEngine);
+                //var lotoFacil = Download(new LotoFacilEngine(new LotoFacil(new HttpClient())));
+                
                 int[][] results = msEngine.GetPreviousResults();
                 var core = new CoreConfig();                
                 var userArgs = ProcessArgs(args, core);
@@ -78,6 +89,7 @@ namespace LotteryCrawler.App
                     Console.WriteLine($"Choose a valid option between {string.Join("/", _menuOptions)}");
             }
             Console.WriteLine("Finished.");
+            //Console.ReadKey();
         }
 
         private static void GenerateBatch(int[][] results, UserInput userArgs, List<IReadEngine> oldEngines, IGenerateEngine generateEngine, short manyNumbers)

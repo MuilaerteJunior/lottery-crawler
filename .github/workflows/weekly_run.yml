@@ -2,7 +2,7 @@ name: Weekly App Execution
 
 on:
   schedule:
-    - cron: '0 0 * * 1'
+    - cron: '0 0 * * 4'
   workflow_dispatch: 
 
 jobs:
@@ -20,17 +20,21 @@ jobs:
       - name: Build and Run App - Jr
         run: |
           dotnet restore
-          dotnet run l 6 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_l_jr.txt
+          dotnet run kkk 12 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_kkk_jr.txt
+          dotnet run bd4 12 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_bd4_jr.txt
+          dotnet run wpf 12 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_wpf_jr.txt
 
       - name: Build and Run App - Mumu
         run: |
           dotnet restore
-          dotnet run l2 6 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_l2_mumu.txt
+          dotnet run kkk 12 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_kkk_mumu.txt
+          dotnet run bd4 12 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_bd4_mumu.txt
+          dotnet run wpf 12 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_wpf_mumu.txt
               
       - name: Build and Run Study
         run: |
           dotnet restore
-          dotnet run s --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_study.txt
+          dotnet run s 12 --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_study.txt
 
       - name: Send Email - Jr
         uses: dawidd6/action-send-mail@v3
@@ -43,7 +47,7 @@ jobs:
           to: ${{ secrets.RECIPIENT_EMAIL }}
           from: "Serviço de automação <${{ secrets.SENDER_EMAIL }}>"
           body: "The weekly task has completed. Please find the log attached."
-          attachments: result_app_l_jr.txt,result_study.txt
+          attachments: result_app_kkk_jr.txt,result_app_bd4_jr.txt,result_app_wpf_jr.txt,result_study.txt
     
       - name: Send Email - Mumu
         uses: dawidd6/action-send-mail@v3
@@ -56,4 +60,4 @@ jobs:
           to: ${{ secrets.RECIPIENT_EMAIL_2 }}
           from: "Serviço de automação <${{ secrets.SENDER_EMAIL }}>"
           body: "A tarefa foi finalizada. Confira o arquivo em anexo."
-          attachments: result_app_l2_mumu.txt
+          attachments: result_app_kkk_mumu.txt,result_app_bd4_mumu.txt,result_app_wpf_mumu.txt

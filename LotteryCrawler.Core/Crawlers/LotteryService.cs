@@ -13,14 +13,15 @@ namespace LotteryCrawler.Core.Crawlers
 
         public abstract Queue<Sorteio> ObterTodosJogos(int[] idJogos);
         public abstract int ObterNumeroResultadoMaisRecente();
+        public abstract string GetUrlAddress();
 
         protected T? ObterJogo(int? numeroJogo)
         {
             if (_httpClient == null) throw new NullReferenceException("_httpClient");
-            if (_httpClient.BaseAddress == null) throw new NullReferenceException("_httpClient.BaseAddress");
+            //if (_httpClient.BaseAddress == null) throw new NullReferenceException("_httpClient.BaseAddress");
 
             var jogo = new T();
-            var currentUrl = string.Concat(_httpClient.BaseAddress.AbsoluteUri, (numeroJogo.HasValue ? $"/{numeroJogo}" : ""));
+            var currentUrl = string.Concat(this.GetUrlAddress(), (numeroJogo.HasValue ? $"/{numeroJogo}" : ""));
             Console.WriteLine($"CurrentUrl {currentUrl}");
             var response = _httpClient.GetAsync(currentUrl);
             Task.WaitAll(response);

@@ -1,3 +1,5 @@
+using LotteryCrawler.Core.Atributes;
+
 namespace LotteryCrawler.Core.Strategies.ReadEngines
 {
     /// <summary>
@@ -19,6 +21,7 @@ namespace LotteryCrawler.Core.Strategies.ReadEngines
     /// A number absent for the entire history gets a boost of 1.0;
     /// a number that appeared in the most recent draw gets a boost of ~0.
     /// </summary>
+    [Rank(10)]
     public class DuenessReadEngine : IReadEngine
     {
         public void Read(int[][] history, BetNumber[] betNumbers)

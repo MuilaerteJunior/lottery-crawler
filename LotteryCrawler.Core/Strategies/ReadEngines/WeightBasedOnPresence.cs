@@ -8,10 +8,13 @@
             for (int i = 0; i < history.Length; i++)
             {
                 decimal weight = (decimal)(i + 1) / history.Length;
-                foreach (int n in history[i])
+                if (history[i] != null)
                 {
-                    if (!weights.ContainsKey(n)) weights[n] = 0;
-                    weights[n] += weight;
+                    foreach (int n in history[i])
+                    {
+                        if (!weights.ContainsKey(n)) weights[n] = 0;
+                        weights[n] += weight;
+                    }
                 }
             }
 
