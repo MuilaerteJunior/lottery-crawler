@@ -33,3 +33,4 @@ jobs:
           to: ${{ secrets.RECIPIENT_EMAIL }}
           from: "Serviço de automação <${{ secrets.SENDER_EMAIL }}>"
           body: "Stress mode executado, confira o arquivo em anexo."
+          attachments: result_stress.txt
