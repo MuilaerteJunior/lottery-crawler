@@ -20,7 +20,7 @@ jobs:
       - name: Executing stress mode
         run: |
           dotnet restore
-          dotnet run x 12 --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_stress.txt
+          dotnet run x 8 --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_stress.txt
           
       - name: Send Email - Junior
         uses: dawidd6/action-send-mail@v3

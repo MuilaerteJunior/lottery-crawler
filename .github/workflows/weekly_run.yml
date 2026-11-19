@@ -20,21 +20,21 @@ jobs:
       - name: Build and Run App - Jr
         run: |
           dotnet restore
-          dotnet run bdf 12 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_bdf_jr.txt
-          dotnet run bd4 12 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_bd4_jr.txt
-          dotnet run cn 12 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_cn_jr.txt
+          dotnet run bdf 8 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_bdf_jr.txt
+          dotnet run bd4 8 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_bd4_jr.txt
+          dotnet run cn 8 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_cn_jr.txt
 
       - name: Build and Run App - Mumu
         run: |
           dotnet restore
-          dotnet run bdf 12 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_bdf_mumu.txt
-          dotnet run bd4 12 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_bd4_mumu.txt
-          dotnet run cn 12 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_cn_mumu.txt
+          dotnet run bdf 8 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_bdf_mumu.txt
+          dotnet run bd4 8 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_bd4_mumu.txt
+          dotnet run cn 8 --project LotteryCrawler.App/LotteryCrawler.App.csproj --configuration Release > result_app_cn_mumu.txt
               
       - name: Build and Run Study
         run: |
           dotnet restore
-          dotnet run s 12 --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_study.txt
+          dotnet run s 8 --project LotteryCrawler.Study/LotteryCrawler.Study.csproj --configuration Release > result_study.txt
 
       - name: Send Email - Jr
         uses: dawidd6/action-send-mail@v3
